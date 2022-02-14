@@ -1,0 +1,1472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<device>
+    <protocol>
+        <param name="CC_TEST">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Проверка работы Control Const (по-умолчанию "0011223344556677")</description>
+            <write_hexcmd>0x4001</write_hexcmd>
+            <read_hexcmd>0x0001</read_hexcmd>
+            <workbits>64</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="SOFTWARE_VERSION">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Версия прошивки в формате: год-месяц-число-часы-минуты-секунды (время начала компиляции проекта)</description>
+            <write_hexcmd>0x4002</write_hexcmd>
+            <read_hexcmd>0x0002</read_hexcmd>
+            <workbits>64</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="HARD_RESET">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Хардверный ресет всей платы по питанию (для активации произвести запись 0xAA)</description>
+            <write_hexcmd>0x4003</write_hexcmd>
+            <read_hexcmd>0x0003</read_hexcmd>
+            <workbits>8</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="SOFT_RESET">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Софтверный ресет без PLL (для активации произвести запись 0xAA)</description>
+            <write_hexcmd>0x4004</write_hexcmd>
+            <read_hexcmd>0x0004</read_hexcmd>
+            <workbits>8</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="ERROR_BYTE_MOMENT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Индикатор текущих ошибок(см. ERROR.txt)</description>
+            <write_hexcmd>0x4005</write_hexcmd>
+            <read_hexcmd>0x0005</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="ERROR_BYTE_ACCUM">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Аккумулятор ошибок. При записи сбросит регистр (см. ERROR.txt)</description>
+            <write_hexcmd>0x4006</write_hexcmd>
+            <read_hexcmd>0x0006</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="BOARD_NUMBER">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Номер устройста/платы (уникальный для каждого блока)</description>
+            <write_hexcmd>0x4007</write_hexcmd>
+            <read_hexcmd>0x0007</read_hexcmd>
+            <workbits>4</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="TEMPERATURE_LD">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Температура на лазерных диодах (градусы * 100)</description>
+            <write_hexcmd>0x4008</write_hexcmd>
+            <read_hexcmd>0x0008</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="TEMPERATURE_FPGA">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Температура на ПЛИСе (градусы * 100)</description>
+            <write_hexcmd>0x4009</write_hexcmd>
+            <read_hexcmd>0x0009</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="TEMP_CS">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'temp_ds18s20_1' Данные(D) с датчика температуры ds18s20 1 о температуре в ____ (T) (D=10*T) [-550 to 850]</description>
+            <write_hexcmd>0x400A</write_hexcmd>
+            <read_hexcmd>0x000A</read_hexcmd>
+            <workbits>13</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="MAX_CNT_WAIT_RESET">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Колличество тиков/тактов задержки, перед включением основного алгоритма (50_000_000 = 1 сек)</description>
+            <write_hexcmd>0x400D</write_hexcmd>
+            <read_hexcmd>0x000D</read_hexcmd>
+            <workbits>28</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LTC2373_1_MOSI_DATA">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные, передаваемы в АЦП1 по SPI.</description>
+            <write_hexcmd>0x4010</write_hexcmd>
+            <read_hexcmd>0x0010</read_hexcmd>
+            <workbits>26</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LTC2373_1_MISO_DATA">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные, принимаемые с АЦП1 по SPI.</description>
+            <write_hexcmd>0x4011</write_hexcmd>
+            <read_hexcmd>0x0011</read_hexcmd>
+            <workbits>26</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LTC2373_2_MOSI_DATA">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные, передаваемы в АЦП2 по SPI.</description>
+            <write_hexcmd>0x4012</write_hexcmd>
+            <read_hexcmd>0x0012</read_hexcmd>
+            <workbits>26</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LTC2373_2_MISO_DATA">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные, принимаемые с АЦП2 по SPI.</description>
+            <write_hexcmd>0x4013</write_hexcmd>
+            <read_hexcmd>0x0013</read_hexcmd>
+            <workbits>26</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD1_SPI_DATAOUT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные, передаваемые в iC-HT LDD контроллер №1</description>
+            <write_hexcmd>0x4014</write_hexcmd>
+            <read_hexcmd>0x0014</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD1_SPI_DATAIN">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные (только последний байт), iC-HT LDD контроллера №1</description>
+            <write_hexcmd>0x4015</write_hexcmd>
+            <read_hexcmd>0x0015</read_hexcmd>
+            <workbits>8</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD1_MAX_CURRENT_LIM">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Ограничение по току iC-HT LDD контроллера №1</description>
+            <write_hexcmd>0x4016</write_hexcmd>
+            <read_hexcmd>0x0016</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD1_OFFSET_HIGH_RANGE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Величина смещения HIGH токового диапазона, относительно LOW токового диапазона iC-HT LDD контроллера №1 (калибруется)</description>
+            <write_hexcmd>0x4017</write_hexcmd>
+            <read_hexcmd>0x0017</read_hexcmd>
+            <workbits>10</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="I_LDD1_BKW">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'LDD1_ACTIVE_CURRENT' Текущий тока (код), который записывается в iC-HT LDD контроллера №1</description>
+            <write_hexcmd>0x4018</write_hexcmd>
+            <read_hexcmd>0x0018</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD1_LDK">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на катоде LDD1</description>
+            <write_hexcmd>0x4019</write_hexcmd>
+            <read_hexcmd>0x0019</read_hexcmd>
+            <workbits>10</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD2_SPI_DATAOUT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные, передаваемые в iC-HT LDD контроллер №2</description>
+            <write_hexcmd>0x401A</write_hexcmd>
+            <read_hexcmd>0x001A</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD2_SPI_DATAIN">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные (только последний байт), iC-HT LDD контроллера №2</description>
+            <write_hexcmd>0x401B</write_hexcmd>
+            <read_hexcmd>0x001B</read_hexcmd>
+            <workbits>8</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD2_MAX_CURRENT_LIM">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Ограничение по току iC-HT LDD контроллера №2</description>
+            <write_hexcmd>0x401C</write_hexcmd>
+            <read_hexcmd>0x001C</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD2_OFFSET_HIGH_RANGE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Величина смещения HIGH токового диапазона, относительно LOW токового диапазона iC-HT LDD контроллера №2 (калибруется)</description>
+            <write_hexcmd>0x401D</write_hexcmd>
+            <read_hexcmd>0x001D</read_hexcmd>
+            <workbits>10</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="I_LDD2_BKW">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'LDD2_ACTIVE_CURRENT' Текущий тока (код), который записывается в iC-HT LDD контроллера №2</description>
+            <write_hexcmd>0x401E</write_hexcmd>
+            <read_hexcmd>0x001E</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD2_LDK">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на катоде LDD2</description>
+            <write_hexcmd>0x401F</write_hexcmd>
+            <read_hexcmd>0x001F</read_hexcmd>
+            <workbits>10</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD3_SPI_DATAOUT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные, передаваемые в iC-HT LDD контроллер №3</description>
+            <write_hexcmd>0x4020</write_hexcmd>
+            <read_hexcmd>0x0020</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD3_SPI_DATAIN">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные (только последний байт), iC-HT LDD контроллера №3</description>
+            <write_hexcmd>0x4021</write_hexcmd>
+            <read_hexcmd>0x0021</read_hexcmd>
+            <workbits>8</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD3_MAX_CURRENT_LIM">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Ограничение по току iC-HT LDD контроллера №3</description>
+            <write_hexcmd>0x4022</write_hexcmd>
+            <read_hexcmd>0x0022</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD3_OFFSET_HIGH_RANGE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Величина смещения HIGH токового диапазона, относительно LOW токового диапазона iC-HT LDD контроллера №3 (калибруется)</description>
+            <write_hexcmd>0x4023</write_hexcmd>
+            <read_hexcmd>0x0023</read_hexcmd>
+            <workbits>10</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="I_LDD3_FRW">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'LDD3_ACTIVE_CURRENT' Текущий тока (код), который записывается в iC-HT LDD контроллера №3</description>
+            <write_hexcmd>0x4024</write_hexcmd>
+            <read_hexcmd>0x0024</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD3_LDK">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на катоде LDD3</description>
+            <write_hexcmd>0x4025</write_hexcmd>
+            <read_hexcmd>0x0025</read_hexcmd>
+            <workbits>10</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD4_SPI_DATAOUT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные, передаваемые в iC-HT LDD контроллер №4</description>
+            <write_hexcmd>0x4026</write_hexcmd>
+            <read_hexcmd>0x0026</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD4_SPI_DATAIN">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Данные (только последний байт), iC-HT LDD контроллера №4</description>
+            <write_hexcmd>0x4027</write_hexcmd>
+            <read_hexcmd>0x0027</read_hexcmd>
+            <workbits>8</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LDD4_MAX_CURRENT_LIM">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Ограничение по току iC-HT LDD контроллера №4</description>
+            <write_hexcmd>0x4028</write_hexcmd>
+            <read_hexcmd>0x0028</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD4_OFFSET_HIGH_RANGE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Величина смещения HIGH токового диапазона, относительно LOW токового диапазона iC-HT LDD контроллера №4 (калибруется)</description>
+            <write_hexcmd>0x4029</write_hexcmd>
+            <read_hexcmd>0x0029</read_hexcmd>
+            <workbits>10</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="I_LDD4_FRW">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'LDD4_ACTIVE_CURRENT' Текущий тока (код), который записывается в iC-HT LDD контроллера №4</description>
+            <write_hexcmd>0x402A</write_hexcmd>
+            <read_hexcmd>0x002A</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD4_LDK">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на катоде LDD4</description>
+            <write_hexcmd>0x402B</write_hexcmd>
+            <read_hexcmd>0x002B</read_hexcmd>
+            <workbits>10</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="ADC1CH0_VD8_LDD3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC1_DATA_CH0' Данные с ADC1 канал 0</description>
+            <write_hexcmd>0x402C</write_hexcmd>
+            <read_hexcmd>0x002C</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC1CH1_VD7_LDD1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC1_DATA_CH1' Данные с ADC1 канал 1</description>
+            <write_hexcmd>0x402D</write_hexcmd>
+            <read_hexcmd>0x002D</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC1CH2_VD6_Pout_L2_1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC1_DATA_CH2' Данные с ADC1 канал 2</description>
+            <write_hexcmd>0x402E</write_hexcmd>
+            <read_hexcmd>0x002E</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC1CH3_VD5_Pout_L1_1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC1_DATA_CH3' Данные с ADC1 канал 3</description>
+            <write_hexcmd>0x402F</write_hexcmd>
+            <read_hexcmd>0x002F</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC1CH4_VD4_Pin_L2_1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC1_DATA_CH4' Данные с ADC1 канал 4</description>
+            <write_hexcmd>0x4030</write_hexcmd>
+            <read_hexcmd>0x0030</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC1CH5_VD3_Pin_L1_1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC1_DATA_CH5' Данные с ADC1 канал 5</description>
+            <write_hexcmd>0x4031</write_hexcmd>
+            <read_hexcmd>0x0031</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC2CH0_VD14_LDD4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC2_DATA_CH0' Данные с ADC2 канал 0</description>
+            <write_hexcmd>0x4032</write_hexcmd>
+            <read_hexcmd>0x0032</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC2CH1_VD13_LDD2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC2_DATA_CH1' Данные с ADC2 канал 1</description>
+            <write_hexcmd>0x4033</write_hexcmd>
+            <read_hexcmd>0x0033</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC2CH2_VD12_Pout_L2_2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC2_DATA_CH2' Данные с ADC2 канал 2</description>
+            <write_hexcmd>0x4034</write_hexcmd>
+            <read_hexcmd>0x0034</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC2CH3_VD11_Pout_L1_2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC2_DATA_CH3' Данные с ADC2 канал 3</description>
+            <write_hexcmd>0x4035</write_hexcmd>
+            <read_hexcmd>0x0035</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC2CH4_VD10_Pin_L2_2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC2_DATA_CH4' Данные с ADC2 канал 4</description>
+            <write_hexcmd>0x4036</write_hexcmd>
+            <read_hexcmd>0x0036</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="ADC2CH5_VD9_Pin_L1_2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'ADC2_DATA_CH5' Данные с ADC2 канал 5</description>
+            <write_hexcmd>0x4037</write_hexcmd>
+            <read_hexcmd>0x0037</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC1CH0_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП1 канала 0</description>
+            <write_hexcmd>0x4038</write_hexcmd>
+            <read_hexcmd>0x0038</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC1CH1_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП1 канала 1</description>
+            <write_hexcmd>0x4039</write_hexcmd>
+            <read_hexcmd>0x0039</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC1CH2_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП1 канала 2</description>
+            <write_hexcmd>0x403A</write_hexcmd>
+            <read_hexcmd>0x003A</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC1CH3_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП1 канала 3</description>
+            <write_hexcmd>0x403B</write_hexcmd>
+            <read_hexcmd>0x003B</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC1CH4_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП1 канала 4</description>
+            <write_hexcmd>0x403C</write_hexcmd>
+            <read_hexcmd>0x003C</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC1CH5_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП1 канала 5</description>
+            <write_hexcmd>0x403D</write_hexcmd>
+            <read_hexcmd>0x003D</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC2CH0_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП2 канала 0</description>
+            <write_hexcmd>0x403E</write_hexcmd>
+            <read_hexcmd>0x003E</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC2CH1_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП2 канала 1</description>
+            <write_hexcmd>0x403F</write_hexcmd>
+            <read_hexcmd>0x003F</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC2CH2_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП2 канала 2</description>
+            <write_hexcmd>0x4040</write_hexcmd>
+            <read_hexcmd>0x0040</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC2CH3_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП2 канала 3</description>
+            <write_hexcmd>0x4041</write_hexcmd>
+            <read_hexcmd>0x0041</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC2CH4_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП2 канала 4</description>
+            <write_hexcmd>0x4042</write_hexcmd>
+            <read_hexcmd>0x0042</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="OFFSET_ADC2CH5_">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>	Смещение данных АЦП2 канала 5</description>
+            <write_hexcmd>0x4043</write_hexcmd>
+            <read_hexcmd>0x0043</read_hexcmd>
+            <workbits>19</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="COEFF_PIN1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала Pin1 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x4044</write_hexcmd>
+            <read_hexcmd>0x0044</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_PIN2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала Pin2 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x4045</write_hexcmd>
+            <read_hexcmd>0x0045</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_ASE1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала ASE1 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x4046</write_hexcmd>
+            <read_hexcmd>0x0046</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_ASE2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала ASE2 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x4047</write_hexcmd>
+            <read_hexcmd>0x0047</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_POUT1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала Pout1 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x4048</write_hexcmd>
+            <read_hexcmd>0x0048</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_POUT2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала Pout2 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x4049</write_hexcmd>
+            <read_hexcmd>0x0049</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_LDD34_ADC2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала LDD3/4 АЦП 2 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x404A</write_hexcmd>
+            <read_hexcmd>0x004A</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_LDD34_ADC1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала LDD3/4 АЦП 1 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x404B</write_hexcmd>
+            <read_hexcmd>0x004B</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_LDD12_ADC2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала LDD1/2 АЦП 2 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x404C</write_hexcmd>
+            <read_hexcmd>0x004C</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="COEFF_LDD12_ADC1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Маштабный коэффициент сигнала LDD1/2 АЦП 1 -> COEFF_FP * 2^16</description>
+            <write_hexcmd>0x404D</write_hexcmd>
+            <read_hexcmd>0x004D</read_hexcmd>
+            <workbits>18</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="Therm_LD3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на терморезисторе лазерного диода 3</description>
+            <write_hexcmd>0x404E</write_hexcmd>
+            <read_hexcmd>0x004E</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="MON_PWR_LDD3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение питания лазерного диода 3</description>
+            <write_hexcmd>0x404F</write_hexcmd>
+            <read_hexcmd>0x004F</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="Therm_LD4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Ток потребления платы управления</description>
+            <write_hexcmd>0x4050</write_hexcmd>
+            <read_hexcmd>0x0050</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="MON_PWR_LDD4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение питания лазерного диода 4</description>
+            <write_hexcmd>0x4051</write_hexcmd>
+            <read_hexcmd>0x0051</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="MON_PWR_LDD1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение питания лазерного диода 1</description>
+            <write_hexcmd>0x4052</write_hexcmd>
+            <read_hexcmd>0x0052</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="Therm_LD1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на терморезисторе лазерного диода 1</description>
+            <write_hexcmd>0x4053</write_hexcmd>
+            <read_hexcmd>0x0053</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="MON_PWR_LDD2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение питания лазерного диода 2</description>
+            <write_hexcmd>0x4054</write_hexcmd>
+            <read_hexcmd>0x0054</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="Therm_LD2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на терморезисторе лазерного диода 2</description>
+            <write_hexcmd>0x4055</write_hexcmd>
+            <read_hexcmd>0x0055</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_LDD_ADC4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение LDD принимаемые с АЦП4</description>
+            <write_hexcmd>0x4056</write_hexcmd>
+            <read_hexcmd>0x0056</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_LDD_ADC3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение LDD принимаемые с АЦП3</description>
+            <write_hexcmd>0x4057</write_hexcmd>
+            <read_hexcmd>0x0057</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_LDD_ADC2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение LDD принимаемые с АЦП2</description>
+            <write_hexcmd>0x4058</write_hexcmd>
+            <read_hexcmd>0x0058</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_LDD_ADC1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение LDD принимаемые с АЦП1</description>
+            <write_hexcmd>0x4059</write_hexcmd>
+            <read_hexcmd>0x0059</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="IN_CURRENT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Входной ток</description>
+            <write_hexcmd>0x405A</write_hexcmd>
+            <read_hexcmd>0x005A</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="VCC_ADC">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Входное напряжение</description>
+            <write_hexcmd>0x405B</write_hexcmd>
+            <read_hexcmd>0x005B</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_2_ADC">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение питания DC2</description>
+            <write_hexcmd>0x405C</write_hexcmd>
+            <read_hexcmd>0x005C</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_1_ADC">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение питания DC1</description>
+            <write_hexcmd>0x405D</write_hexcmd>
+            <read_hexcmd>0x005D</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_ADC">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на АЦП</description>
+            <write_hexcmd>0x405E</write_hexcmd>
+            <read_hexcmd>0x005E</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="5V_ADC">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на АЦП</description>
+            <write_hexcmd>0x405F</write_hexcmd>
+            <read_hexcmd>0x005F</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_ADC_ADC2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на ФП2</description>
+            <write_hexcmd>0x4060</write_hexcmd>
+            <read_hexcmd>0x0060</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="5V_ADC_ADC2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на ФП2</description>
+            <write_hexcmd>0x4061</write_hexcmd>
+            <read_hexcmd>0x0061</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_ADC_ADC1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на ФП1</description>
+            <write_hexcmd>0x4062</write_hexcmd>
+            <read_hexcmd>0x0062</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="5V_ADC_ADC1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение на ФП1</description>
+            <write_hexcmd>0x4063</write_hexcmd>
+            <read_hexcmd>0x0063</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="5V_DAC_ADC">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение питания ЦАП </description>
+            <write_hexcmd>0x4064</write_hexcmd>
+            <read_hexcmd>0x0064</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="3.3V_DAC_ADC">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Напряжение питания ЦАП </description>
+            <write_hexcmd>0x4065</write_hexcmd>
+            <read_hexcmd>0x0065</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="A1_ATTEN_L1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'DAC_1_CC_DATA' Передача данных на ЦАП CH1 [15..0]</description>
+            <write_hexcmd>0x406C</write_hexcmd>
+            <read_hexcmd>0x006C</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="A2_ATTEN_L2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'DAC_2_CC_DATA' Передача данных на ЦАП CH2 [15..0]</description>
+            <write_hexcmd>0x406D</write_hexcmd>
+            <read_hexcmd>0x006D</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="A3_ATTEN_TEST_L1_TO_L2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'DAC_3_CC_DATA' Передача данных на ЦАП CH3 [15..0]</description>
+            <write_hexcmd>0x406E</write_hexcmd>
+            <read_hexcmd>0x006E</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="A4_ATTEN_TEST_L2_TO_L1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'DAC_4_CC_DATA' Передача данных на ЦАП CH4 [15..0]</description>
+            <write_hexcmd>0x406F</write_hexcmd>
+            <read_hexcmd>0x006F</read_hexcmd>
+            <workbits>16</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="MODE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Режим работы прибора: 0 - ручная установка тока; 1 - компенсация ЛД по мощности; 2 - компенсация по выходной мощности; 3 - компенсация по коэф.усиления</description>
+            <write_hexcmd>0x4070</write_hexcmd>
+            <read_hexcmd>0x0070</read_hexcmd>
+            <workbits>2</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD1_CURRENT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Задание тока на LDD1 в режиме ручной установки тока (MODE 0)</description>
+            <write_hexcmd>0x4071</write_hexcmd>
+            <read_hexcmd>0x0071</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD2_CURRENT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Задание тока на LDD2 в режиме ручной установки тока (MODE 0)</description>
+            <write_hexcmd>0x4072</write_hexcmd>
+            <read_hexcmd>0x0072</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD3_CURRENT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Задание тока на LDD3 в режиме ручной установки тока (MODE 0)</description>
+            <write_hexcmd>0x4073</write_hexcmd>
+            <read_hexcmd>0x0073</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD4_CURRENT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Задание тока на LDD4 в режиме ручной установки тока (MODE 0)</description>
+            <write_hexcmd>0x4074</write_hexcmd>
+            <read_hexcmd>0x0074</read_hexcmd>
+            <workbits>11</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="LDD_EN">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Включение/выключение работы iC-HT LDD контроллеров. Побитово: 3бит-LDD4, 2бит-LDD3, 1бит-LDD2, 0бит-LDD1,</description>
+            <write_hexcmd>0x4075</write_hexcmd>
+            <read_hexcmd>0x0075</read_hexcmd>
+            <workbits>4</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="SEL_LDD1_LDD2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Выбор рабочего лазерного диода из дублирующей пары LDD1/LDD2 [0 - LDD1; 1 - LDD2]</description>
+            <write_hexcmd>0x4076</write_hexcmd>
+            <read_hexcmd>0x0076</read_hexcmd>
+            <workbits>1</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="SEL_LDD3_LDD4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Выбор рабочего лазерного диода из дублирующей пары LDD3/LDD4 [0 - LDD3; 1 - LDD4]</description>
+            <write_hexcmd>0x4077</write_hexcmd>
+            <read_hexcmd>0x0077</read_hexcmd>
+            <workbits>1</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="P_LDD_BKW">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'LDD1_LDD2_SETPOINT' Задание уставки мощности LDD1 в режиме компенсация ЛД по мощности (MODE 1)</description>
+            <write_hexcmd>0x4078</write_hexcmd>
+            <read_hexcmd>0x0078</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_LDD_FRW">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'LDD3_LDD4_SETPOINT' Задание уставки мощности LDD3 в режиме компенсации ЛД по мощности (MODE 1)</description>
+            <write_hexcmd>0x4079</write_hexcmd>
+            <read_hexcmd>0x0079</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="Kp">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент деления можности по каналам.</description>
+            <write_hexcmd>0x407A</write_hexcmd>
+            <read_hexcmd>0x007A</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P1_1550_OUT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'POUT1_SETPOINT' Задание уставки выходной мощности в режиме компенсация по выходной мощности (MODE 2)</description>
+            <write_hexcmd>0x407B</write_hexcmd>
+            <read_hexcmd>0x007B</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P2_1550_OUT">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'POUT2_SETPOINT' Задание уставки выходной мощности в режиме компенсация по выходной мощности (MODE 2)</description>
+            <write_hexcmd>0x407C</write_hexcmd>
+            <read_hexcmd>0x007C</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="GAIN">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>'G_COEFF' Коэффициент усиления входной мощьности</description>
+            <write_hexcmd>0x407D</write_hexcmd>
+            <read_hexcmd>0x007D</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_IN_G_LIN_MAX">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Ограничение уставки вых. мощьности максимальный</description>
+            <write_hexcmd>0x407E</write_hexcmd>
+            <read_hexcmd>0x007E</read_hexcmd>
+            <workbits>24</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="P_IN_G_LIN_MIN">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Ограничение уставки вых. мощьности минимальный</description>
+            <write_hexcmd>0x407F</write_hexcmd>
+            <read_hexcmd>0x007F</read_hexcmd>
+            <workbits>24</workbits>
+            <valtype>SINT</valtype>
+        </param>
+        <param name="LINK_STATUS_1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Состояние линка 1го трансивера, 0 - нет линка, 1 - есть линк</description>
+            <write_hexcmd>0x4091</write_hexcmd>
+            <read_hexcmd>0x0091</read_hexcmd>
+            <workbits>1</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="LINK_STATUS_2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Состояние линка 2го трансивера, 0 - нет линка, 1 - есть линк</description>
+            <write_hexcmd>0x4092</write_hexcmd>
+            <read_hexcmd>0x0092</read_hexcmd>
+            <workbits>1</workbits>
+            <valtype>HEX</valtype>
+        </param>
+        <param name="WDM_CHANNEL">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Выбор WDM канала (по нашей сетке 1 - 11)</description>
+            <write_hexcmd>0x40C0</write_hexcmd>
+            <read_hexcmd>0x00C0</read_hexcmd>
+            <workbits>4</workbits>
+            <valtype>UINT</valtype>
+        </param>
+        <param name="WDM_CH1_COEFF_VALUE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Поправочный коэффициент усиления для WDM канала 1</description>
+            <write_hexcmd>0x40C1</write_hexcmd>
+            <read_hexcmd>0x00C1</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="WDM_CH6_COEFF_VALUE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Поправочный коэффициент усиления для WDM канала 6</description>
+            <write_hexcmd>0x40C2</write_hexcmd>
+            <read_hexcmd>0x00C2</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="WDM_CH11_COEFF_VALUE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Поправочный коэффициент усиления для WDM канала 11</description>
+            <write_hexcmd>0x40C3</write_hexcmd>
+            <read_hexcmd>0x00C3</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="PIN1_FILT_CAL">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Входная мощность на линии 1 (отфильтрованная и откалиброванная)</description>
+            <write_hexcmd>0x40C4</write_hexcmd>
+            <read_hexcmd>0x00C4</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="PIN2_FILT_CAL">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Входная мощность на линии 2 (отфильтрованная и откалиброванная)</description>
+            <write_hexcmd>0x40C5</write_hexcmd>
+            <read_hexcmd>0x00C5</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="POUT1_FILT_CAL">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Выходная мощность на линии 1 (отфильтрованная и откалиброванная)</description>
+            <write_hexcmd>0x40C6</write_hexcmd>
+            <read_hexcmd>0x00C6</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="POUT2_FILT_CAL">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Выходная мощность на линии 2 (отфильтрованная и откалиброванная)</description>
+            <write_hexcmd>0x40C7</write_hexcmd>
+            <read_hexcmd>0x00C7</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="COEFF_LOW_LINE">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Поправочнй коэффициент для усиления "слабой" линии</description>
+            <write_hexcmd>0x40C8</write_hexcmd>
+            <read_hexcmd>0x00C8</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_VALUE_CH0">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент P-звена ПИД-регулятора (канал 0)</description>
+            <write_hexcmd>0x40DD</write_hexcmd>
+            <read_hexcmd>0x00DD</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_VALUE_CH0">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент I-звена ПИД-регулятора (канал 0)</description>
+            <write_hexcmd>0x40DE</write_hexcmd>
+            <read_hexcmd>0x00DE</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="D_VALUE_CH0">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент D-звена ПИД-регулятора (канал 0)</description>
+            <write_hexcmd>0x40DF</write_hexcmd>
+            <read_hexcmd>0x00DF</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MAX_CH0">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Максимальное значение интегратора в ПИД-регуляторе (канал 0)</description>
+            <write_hexcmd>0x40E0</write_hexcmd>
+            <read_hexcmd>0x00E0</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MIN_CH0">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Минимальное значение интегратора в ПИД-регуляторе (канал 0)	</description>
+            <write_hexcmd>0x40E1</write_hexcmd>
+            <read_hexcmd>0x00E1</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_VALUE_CH1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент P-звена ПИД-регулятора (канал 1)</description>
+            <write_hexcmd>0x40E2</write_hexcmd>
+            <read_hexcmd>0x00E2</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_VALUE_CH1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент I-звена ПИД-регулятора (канал 1)</description>
+            <write_hexcmd>0x40E3</write_hexcmd>
+            <read_hexcmd>0x00E3</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="D_VALUE_CH1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент D-звена ПИД-регулятора (канал 1)</description>
+            <write_hexcmd>0x40E4</write_hexcmd>
+            <read_hexcmd>0x00E4</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MAX_CH1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Максимальное значение интегратора в ПИД-регуляторе (канал 1)</description>
+            <write_hexcmd>0x40E5</write_hexcmd>
+            <read_hexcmd>0x00E5</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MIN_CH1">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Минимальное значение интегратора в ПИД-регуляторе (канал 1)	</description>
+            <write_hexcmd>0x40E6</write_hexcmd>
+            <read_hexcmd>0x00E6</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_VALUE_CH2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент P-звена ПИД-регулятора (канал 2)</description>
+            <write_hexcmd>0x40E7</write_hexcmd>
+            <read_hexcmd>0x00E7</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_VALUE_CH2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент I-звена ПИД-регулятора (канал 2)</description>
+            <write_hexcmd>0x40E8</write_hexcmd>
+            <read_hexcmd>0x00E8</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="D_VALUE_CH2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент D-звена ПИД-регулятора (канал 2)</description>
+            <write_hexcmd>0x40E9</write_hexcmd>
+            <read_hexcmd>0x00E9</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MAX_CH2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Максимальное значение интегратора в ПИД-регуляторе (канал 2)</description>
+            <write_hexcmd>0x40EA</write_hexcmd>
+            <read_hexcmd>0x00EA</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MIN_CH2">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Минимальное значение интегратора в ПИД-регуляторе (канал 2)	</description>
+            <write_hexcmd>0x40EB</write_hexcmd>
+            <read_hexcmd>0x00EB</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_VALUE_CH3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент P-звена ПИД-регулятора (канал 3)</description>
+            <write_hexcmd>0x40EC</write_hexcmd>
+            <read_hexcmd>0x00EC</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_VALUE_CH3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент I-звена ПИД-регулятора (канал 3)</description>
+            <write_hexcmd>0x40ED</write_hexcmd>
+            <read_hexcmd>0x00ED</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="D_VALUE_CH3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент D-звена ПИД-регулятора (канал 3)</description>
+            <write_hexcmd>0x40EE</write_hexcmd>
+            <read_hexcmd>0x00EE</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MAX_CH3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Максимальное значение интегратора в ПИД-регуляторе (канал 3)</description>
+            <write_hexcmd>0x40EF</write_hexcmd>
+            <read_hexcmd>0x00EF</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MIN_CH3">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Минимальное значение интегратора в ПИД-регуляторе (канал 3)	</description>
+            <write_hexcmd>0x40F0</write_hexcmd>
+            <read_hexcmd>0x00F0</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_VALUE_CH4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент P-звена ПИД-регулятора (канал 4)</description>
+            <write_hexcmd>0x40F1</write_hexcmd>
+            <read_hexcmd>0x00F1</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_VALUE_CH4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент I-звена ПИД-регулятора (канал 4)</description>
+            <write_hexcmd>0x40F2</write_hexcmd>
+            <read_hexcmd>0x00F2</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="D_VALUE_CH4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент D-звена ПИД-регулятора (канал 4)</description>
+            <write_hexcmd>0x40F3</write_hexcmd>
+            <read_hexcmd>0x00F3</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MAX_CH4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Максимальное значение интегратора в ПИД-регуляторе (канал 4)</description>
+            <write_hexcmd>0x40F4</write_hexcmd>
+            <read_hexcmd>0x00F4</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MIN_CH4">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Минимальное значение интегратора в ПИД-регуляторе (канал 4)	</description>
+            <write_hexcmd>0x40F5</write_hexcmd>
+            <read_hexcmd>0x00F5</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_VALUE_CH5">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент P-звена ПИД-регулятора (канал 5)</description>
+            <write_hexcmd>0x40F6</write_hexcmd>
+            <read_hexcmd>0x00F6</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_VALUE_CH5">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент I-звена ПИД-регулятора (канал 5)</description>
+            <write_hexcmd>0x40F7</write_hexcmd>
+            <read_hexcmd>0x00F7</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="D_VALUE_CH5">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент D-звена ПИД-регулятора (канал 5)</description>
+            <write_hexcmd>0x40F8</write_hexcmd>
+            <read_hexcmd>0x00F8</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MAX_CH5">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Максимальное значение интегратора в ПИД-регуляторе (канал 5)</description>
+            <write_hexcmd>0x40F9</write_hexcmd>
+            <read_hexcmd>0x00F9</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MIN_CH5">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Минимальное значение интегратора в ПИД-регуляторе (канал 5)	</description>
+            <write_hexcmd>0x40FA</write_hexcmd>
+            <read_hexcmd>0x00FA</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="P_VALUE_CH6">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент P-звена ПИД-регулятора (канал 6)</description>
+            <write_hexcmd>0x40FB</write_hexcmd>
+            <read_hexcmd>0x00FB</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_VALUE_CH6">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент I-звена ПИД-регулятора (канал 6)</description>
+            <write_hexcmd>0x40FC</write_hexcmd>
+            <read_hexcmd>0x00FC</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="D_VALUE_CH6">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Коэффициент D-звена ПИД-регулятора (канал 6)</description>
+            <write_hexcmd>0x40FD</write_hexcmd>
+            <read_hexcmd>0x00FD</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MAX_CH6">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Максимальное значение интегратора в ПИД-регуляторе (канал 6)</description>
+            <write_hexcmd>0x40FE</write_hexcmd>
+            <read_hexcmd>0x00FE</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+        <param name="I_MIN_CH6">
+            <visible>ENABLE</visible>
+            <write>ENABLE</write>
+            <description>Минимальное значение интегратора в ПИД-регуляторе (канал 6)	</description>
+            <write_hexcmd>0x40FF</write_hexcmd>
+            <read_hexcmd>0x00FF</read_hexcmd>
+            <workbits>32</workbits>
+            <valtype>FLOAT</valtype>
+        </param>
+    </protocol>
+</device>
