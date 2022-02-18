@@ -176,14 +176,14 @@ classdef FPGA
 %             disp(obj.lastRead)
 %             disp('init')
 %             disp(wvalueinit)
-            try
-                if ~isequal(obj.lastRead,wvalueinit)
-                    error(['Значение' wvalueinit ' не записалось']);
-                end
-            catch ME
-                fig = uifigure;
-                uialert(fig,ME.message,'Failed');
-            end
+%             try
+%                 if ~isequal(obj.lastRead,wvalueinit)
+%                     error(['Значение' wvalueinit ' не записалось']);
+%                 end
+%             catch ME
+%                 fig = uifigure;
+%                 uialert(fig,ME.message,'Failed');
+%             end
         end
         % Чтение данных по названию ячейки из eeprom
         function obj = readDataFromFPGAeeprom(obj,name)
