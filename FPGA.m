@@ -5,6 +5,11 @@ classdef FPGA
         addressTable
         lastRead
     end
+methods (Access = private)
+    function obj = dataExchange(obj)
+
+    end
+end
     methods
         % Конструктор класса
         function obj = FPGA(app)
@@ -16,7 +21,7 @@ classdef FPGA
                 error('Ethernet is not ready');
             end
             name = 'CC_TEST';
-            obj = readDataFromFPGA(obj,name);
+            obj = readDataFromFPGA(obj,name); 
         end
         % Чтение данных по названию ячейки
         function obj = readDataFromFPGA(obj,name)
