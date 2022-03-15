@@ -1,4 +1,4 @@
-classdef Thorlabs
+classdef ThorlabsPower
     properties
         power % значение которое необходимо записать в основной массив данных
         number % номер измерения
