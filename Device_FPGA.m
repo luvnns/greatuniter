@@ -1,4 +1,4 @@
-classdef FPGA
+classdef Device_FPGA
     properties
         virtualObject
         interface
@@ -12,14 +12,12 @@ methods (Access = private)
 end
     methods
         % Конструктор класса
-        function obj = FPGA(app)
+        function obj = Device_FPGA(app)
             obj.interface = app.InterfaceDropDown.Value;
             obj.addressTable = createAddressTable(app.Addresstable.Value{1});
-            if isequal(obj.interface,'JTAG')
+            
                 obj.virtualObject =  tcpclient('localhost', 2540);
-            elseif isequal(obj.interface,'Ethernet')
-                error('Ethernet is not ready');
-            end
+            
             name = 'CC_TEST';
             obj = readDataFromFPGA(obj,name); 
         end
