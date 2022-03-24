@@ -1,60 +1,57 @@
-classdef SwitchOsaEdfa
+classdef Device_SWITCHosaEdfa
     properties (Constant)
-        switchStateRequest = "data?;"
-        switch3on = "003;1;"
-        switch3off = "003;0;"
         baudRate = 57600
+        requestSwitchStateCommand = "data?;"
+        requestSwitchOSACommand = "003;1;"
+        requestSwitchEDFACommand = "003;0;"
+        responseSwitchOSA = convertCharsToStrings(['1;1' char(13)])
+        responseSwitchEDFA = convertCharsToStrings(['0;0' char(13)])
     end
     properties
         comPort
         virtualObject
         switchState
+        lastResponse
+        infoString
     end
-    methods
-        function obj = SwitchOsaEdfa(app)
-            obj.comPort = app.COMportsEditField.Value;
+    methods (Access = private)
+        function obj = readSwitchState(obj)
+            %pause(0.5)
+            obj.lastResponse = readline(obj.virtualObject);
+            if obj.lastResponse == obj.responseSwitchOSA
+                obj.switchState = "OSA";
+                obj.infoString = "Switch state OSA";
+            elseif obj.lastResponse == obj.responseSwitchEDFA
+                obj.switchState = "EDFA";
+                obj.infoString = "Switch state EDFA";
+            else
+                obj.switchState = "unknown";
+                obj.infoString = "Switch state unknown";
+            end
+        end
+    end
+    methods (Access = public)
+        function obj = Device_SWITCHosaEdfa(app)
+            obj.comPort = app.SerialportDropDown.Value;
             obj.virtualObject = serialport(obj.comPort,obj.baudRate);
         end
-        function obj = switchSignalOSA(obj)
-            requestCommand = obj.switch3on;
-            %disp(requestCommand)%%%
-            writeline(obj.virtualObject,requestCommand);
-            obj = readSwitchState(obj);
-            if ~isequal(obj.switchState,"OSA")
-                %error('switch is not working')
-            end
-        end
-        function obj = switchSignalEDFA(obj)
-            requestCommand = obj.switch3off;
-            %disp(requestCommand)%%%
-            writeline(obj.virtualObject,requestCommand);
-            obj = readSwitchState(obj);
-            if ~isequal(obj.switchState,"EDFA")
-                %error('switch is not working')
-            end
-        end
         function obj = requestSwitchState(obj)
-            requestCommand = obj.switchStateRequest;
-            %disp(requestCommand)%%%
+            requestCommand = obj.requestSwitchStateCommand;
             writeline(obj.virtualObject,requestCommand);
             obj = readSwitchState(obj);
         end
-        function obj = readSwitchState(obj)
-            pause(0.5)
-            response = readline(obj.virtualObject);
-            %disp(response)%%%
-            switchOSA = convertCharsToStrings(['1;1' char(13)]);
-            switchEDFA = convertCharsToStrings(['0;0' char(13)]);
-            if isequal(response,switchOSA)
-                obj.switchState = "OSA";
-            elseif isequal(response,switchEDFA)
-                obj.switchState = "EDFA";
+        function obj = switchSignalTo(obj,OSAorEDFAstring)
+            if OSAorEDFAstring == "OSA"
+                requestCommand = obj.requestSwitchOSACommand;
+            elseif OSAorEDFAstring == "EDFA"
+                requestCommand = obj.requestSwitchEDFACommand;
             end
-            %disp(obj.switchState);%%%
+            writeline(obj.virtualObject,requestCommand);
+            obj = readSwitchState(obj);
         end
         function obj = sendCommand(obj,requestCommand)
             writeline(obj.virtualObject,requestCommand);
-            obj.switchState = readline(obj.virtualObject);
+            obj = readSwitchState(obj);
         end
         function obj = deleteVirtualObject(obj)
             delete(obj.virtualObject);
