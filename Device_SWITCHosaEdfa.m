@@ -34,6 +34,7 @@ classdef Device_SWITCHosaEdfa
         function obj = Device_SWITCHosaEdfa(app)
             obj.comPort = app.SerialportDropDown.Value;
             obj.virtualObject = serialport(obj.comPort,obj.baudRate);
+            obj = requestSwitchState(obj);
         end
         function obj = requestSwitchState(obj)
             requestCommand = obj.requestSwitchStateCommand;
