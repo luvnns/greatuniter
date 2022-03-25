@@ -1,41 +1,39 @@
-classdef AttenuatorDicon
+classdef Device_ATTENniMyDaq
+    properties (Constant)
+        name = "myDAQ1"
+        channel = "ao0"
+        type = "Voltage"
+    end
     properties
-        xData
-        yData
+        funcAttenVolt
         virtualObject
-        attenuation
+        lastAttenuation
     end
     methods
-        function obj = AttenuatorDicon(app)
-            dicon = readmatrix(app.DiconpassportTextArea.Value{1});
-            voltageV = dicon(:,1);
-            attenuationdBm = dicon(:,2);
-            [obj.xData, obj.yData] = prepareCurveData( attenuationdBm, voltageV );
+        function obj = Device_ATTENniMyDaq(app)
+            obj.funcAttenVolt = app.funcAttenVolt;
             obj.virtualObject = daq("ni");
-            addoutput(obj.virtualObject, "myDAQ1", "ao0", "Voltage");
-            obj = setAttenuation(obj,0);
+            addoutput(obj.virtualObject, obj.name, obj.channel, obj.type);
+            %obj = setAttenuation(obj,0);
         end
-        function obj = setAttenuation(obj,atten) %obj = 
+        function obj = setAttenuation(obj,attenuation)
+            output = obj.funcAttenVolt(attenuation);
+            write(obj.virtualObject,output);
+            obj.lastAttenuation = attenuation;
+
             try
                 %disp(atten)
                 minAttenuation = min(obj.xData);
                 maxAttenuation = max(obj.xData);
-                if ~((atten >= minAttenuation && atten <= maxAttenuation) || atten == 0)
+                if ~((attenuation >= minAttenuation && attenuation <= maxAttenuation) || attenuation == 0)
                     minAttenuationStr = num2str(minAttenuation);
                     maxAttenuationStr = num2str(maxAttenuation);
-                    range = ['from ' minAttenuationStr ' to ' maxAttenuationStr];
-                    errorMessage = ['Attenuation must be in range ' range];
+                    range = [];
+                    errorMessage = 
                     error(errorMessage);
                 else
-                    % Set up fittype and options.
-                    ft = 'linearinterp';
-                    % Fit model to data.
-                    [fitresult, gof] = fit( obj.xData, obj.yData, ft, 'Normalize', 'on' );
-                    % fitresult - функция, на вход принимает аттенюацию, на выходе
-                    % - напряжение
-                    output_ao0 = fitresult(atten);
-                    write(obj.virtualObject,output_ao0);
-                    obj.attenuation = atten; %obj.
+                    
+                     %obj.
                 end
             catch ME
                 fig = uifigure;
@@ -43,7 +41,6 @@ classdef AttenuatorDicon
             end
         end
         function obj = deleteVirtualObject(obj)
-            setZeroAttenuation(obj);
             flush(obj.virtualObject);
             delete(obj.virtualObject);
         end

@@ -7,28 +7,14 @@ classdef Device_SWITCHosaEdfa
         responseSwitchOSA = convertCharsToStrings(['1;1' char(13)])
         responseSwitchEDFA = convertCharsToStrings(['0;0' char(13)])
     end
-    properties
+    properties %for constructor
         comPort
+    end
+    properties
         virtualObject
         switchState
         lastResponse
         infoString
-    end
-    methods (Access = private)
-        function obj = readSwitchState(obj)
-            %pause(0.5)
-            obj.lastResponse = readline(obj.virtualObject);
-            if obj.lastResponse == obj.responseSwitchOSA
-                obj.switchState = "OSA";
-                obj.infoString = "Switch state OSA";
-            elseif obj.lastResponse == obj.responseSwitchEDFA
-                obj.switchState = "EDFA";
-                obj.infoString = "Switch state EDFA";
-            else
-                obj.switchState = "unknown";
-                obj.infoString = "Switch state unknown";
-            end
-        end
     end
     methods (Access = public)
         function obj = Device_SWITCHosaEdfa(app)
@@ -56,6 +42,22 @@ classdef Device_SWITCHosaEdfa
         end
         function obj = deleteVirtualObject(obj)
             delete(obj.virtualObject);
+        end
+    end
+    methods (Access = private)
+        function obj = readSwitchState(obj)
+            %pause(0.5)
+            obj.lastResponse = readline(obj.virtualObject);
+            if obj.lastResponse == obj.responseSwitchOSA
+                obj.switchState = "OSA";
+                obj.infoString = "Switch state OSA";
+            elseif obj.lastResponse == obj.responseSwitchEDFA
+                obj.switchState = "EDFA";
+                obj.infoString = "Switch state EDFA";
+            else
+                obj.switchState = "unknown";
+                obj.infoString = "Switch state unknown";
+            end
         end
     end
 end
