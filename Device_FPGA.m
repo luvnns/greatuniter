@@ -14,7 +14,7 @@ classdef Device_FPGA
     methods
         function obj = Device_FPGA(app)
             obj.interface = app.InterfaceDropDown.Value;
-            obj.addressTable = createAddressTable(app.Addresstable.Value{1});
+            obj.addressTable = app.mainTable;%createAddressTable(app.Addresstable.Value{1});
             if obj.interface == "JTAG"
                 try
                     obj.virtualObject =  tcpclient('localhost', 2540);
@@ -26,29 +26,29 @@ classdef Device_FPGA
             end
             obj = readData(obj,"FPGA","CC_TEST");
         end
-        function resultTable = createAddressTable(filename)
-            % filename = 'ADDRESS.txt';
-            fileID = fopen(filename,'r+');
-            reading_txt = fscanf(fileID,'%c');
-            address_cell = regexp(reading_txt,'[^# ](\w{4}) = \[(\d*)\] = (\w*) = (\w*.\w*) =',...
-                'tokens');
-            number_of_cell = length(address_cell);
-            address_cell_Name = strings(number_of_cell,1);
-            address_cell_Address = cell(number_of_cell,1);
-            address_cell_Number_of_bits = cell(number_of_cell,1);
-            address_cell_Type = strings(number_of_cell,1);
-            address_Data = cell(number_of_cell,1);
-            for i = 1:number_of_cell
-                address_cell_Name(i) = address_cell{1,i}{1,4};
-                address_cell_Address(i) = address_cell{1,i}(1);
-                address_cell_Number_of_bits(i) = address_cell{1,i}(2);
-                address_cell_Type(i) = address_cell{1,i}{1,3};
-            end
-            resultTable = table(address_cell_Address,address_cell_Number_of_bits,address_cell_Type,address_Data,...
-                'RowNames',address_cell_Name',...
-                'VariableNames',{'ADDR','BITS','FRM','DATA'});
-            fclose(fileID);
-        end
+%         function resultTable = createAddressTable(filename)
+%             % filename = 'ADDRESS.txt';
+%             fileID = fopen(filename,'r+');
+%             reading_txt = fscanf(fileID,'%c');
+%             address_cell = regexp(reading_txt,'[^# ](\w{4}) = \[(\d*)\] = (\w*) = (\w*.\w*) =',...
+%                 'tokens');
+%             number_of_cell = length(address_cell);
+%             address_cell_Name = strings(number_of_cell,1);
+%             address_cell_Address = cell(number_of_cell,1);
+%             address_cell_Number_of_bits = cell(number_of_cell,1);
+%             address_cell_Type = strings(number_of_cell,1);
+%             address_Data = cell(number_of_cell,1);
+%             for i = 1:number_of_cell
+%                 address_cell_Name(i) = address_cell{1,i}{1,4};
+%                 address_cell_Address(i) = address_cell{1,i}(1);
+%                 address_cell_Number_of_bits(i) = address_cell{1,i}(2);
+%                 address_cell_Type(i) = address_cell{1,i}{1,3};
+%             end
+%             resultTable = table(address_cell_Address,address_cell_Number_of_bits,address_cell_Type,address_Data,...
+%                 'RowNames',address_cell_Name',...
+%                 'VariableNames',{'ADDR','BITS','FRM','DATA'});
+%             fclose(fileID);
+%         end
         function output = whatFRM(obj,name)
             if ismember({name},obj.addressTable.Row)
                 currentRow = obj.addressTable(name,:);
