@@ -1,90 +1,85 @@
-classdef OpticalPowerMeterRubin
-    properties
-        comPort
-        virtualObject
-        wavelength
-        lastReadPower
-    end
+classdef Device_OPMrubin
     properties (Constant)
         baudRate = 9600
         powerMinLimit = -60
+        bits = 2^8 %%?
+        requestCurrentWavelengthCommand = char(hex2dec('7A'))
+        requestNextWavelengthCommand = char(hex2dec('7B'))
+        requestPowerCommand = char(hex2dec('82'))
+    end
+    properties
+        name
+        serialPort
+        virtualObject
+        wavelengthArray
+        wavelengthInd
     end
     properties
         numberMeasurement
         powerdBm
-        powerW%%%
+        powerWsym
         time
     end
     methods
-        % Конструктор класса
-        function obj = OpticalPowerMeterRubin(comPort)
-            if nargin > 0
-                obj.comPort = comPort;
-                obj.virtualObject = serialport(obj.comPort,obj.baudRate);
-                obj.numberMeasurement = 0;
-                wavelength = char(hex2dec('7A'));
-                write(obj.virtualObject,wavelength,"char");
-                read_wavelength = read(obj.virtualObject,2,"uint8");
-                obj.wavelength = read_wavelength(1)*256+read_wavelength(2);
+        function obj = Device_OPMrubin(app)
+            obj.name = app.OPMnameEditField.Value;
+            obj.serialPort = app.SerialportDropDown.Value;
+            obj.virtualObject = serialport(obj.serialPort,obj.baudRate);
+            obj = createWavelengthArray(obj);
+            obj.wavelengthInd = 1;
+            obj.numberMeasurement = 0;
+        end
+        function obj = createWavelengthArray(obj)
+            obj.wavelengthArray = [];
+            ind = 1;
+            currentWavelength = requestCurrentWavelength(obj);
+            obj.wavelengthArray(ind) = currentWavelength;
+            currentWavelength = requestNextWavelength(obj);
+            while currentWavelength ~= obj.wavelengthArray(1)
+                ind = ind + 1;
+                obj.wavelengthArray(ind) = currentWavelength;
+                currentWavelength = requestNextWavelength(obj);
             end
         end
-        % Информация о закрытии COM-порта
-        function str = getInfoOpenCom(obj)
-            name = obj.comPort;
-            str = strcat("OPM on ",name," connected;");
+        function currentWavelength = requestCurrentWavelength(obj)
+            write(obj.virtualObject,obj.requestCurrentWavelengthCommand,"char");
+            response = read(obj.virtualObject,2,"uint8");
+            currentWavelength = response(1)*obj.bits+response(2);
         end
-        % Создаем информацию о длине волны в виде строки
-        function str = getInfoWavelength(obj)
-            name = obj.comPort;
-            param = obj.wavelength;
-            param = num2strForPrint(param);
-            str = strcat("OPM on ",name," detect at ",param," nm;");
+        function currentWavelength = requestNextWavelength(obj)
+            write(obj.virtualObject,obj.requestNextWavelengthCommand,"char");
+            response = read(obj.virtualObject,2,"uint8");
+            currentWavelength = response(1)*obj.bits+response(2);
         end
-        % Чтение мощности в дБм
-        function obj = readPowerdBm(obj)
+        function obj = setWavelength(obj,newWavelength) %newWavelength in num
+            newInd = find(obj.wavelengthArray == newWavelength);% or index?
+            oldInd = obj.wavelengthInd;
+            len = length(obj.wavelengthArray);
+            for i = mod(len + newInd - oldInd, len)
+                currentWavelength = requestNextWavelength(obj);
+            end
+            obj.wavelengthInd = newInd;
+            % may be add check that new value matches
+        end
+        function obj = requestPower(obj)
             obj.numberMeasurement = obj.numberMeasurement + 1;
-            i = obj.numberMeasurement; % для краткости записи
-            power = char(hex2dec('82'));
-            write(obj.virtualObject,power,"char");
-            read_power = read(obj.virtualObject,7,"uint8");
-            obj.powerdBm(i) = (read_power(1)*256+read_power(2))/100;
-            if read_power(3) == 1
-                obj.powerdBm(i) = obj.powerdBm(i)*(-1);
-            end
-            if obj.powerdBm(i) < obj.powerMinLimit
-                obj.powerdBm(i) = obj.powerMinLimit;
-            end
-            obj.lastReadPower = obj.powerdBm(i);
+            i = obj.numberMeasurement;
             obj.time(i) = now;
+            write(obj.virtualObject,obj.requestPowerCommand,"char");
+            response = read(obj.virtualObject,7,"uint8");
+            currentPowerdBm = (response(1)*256+response(2))/100;
+            if read_power(3) == 1
+                currentPowerdBm = currentPowerdBm*(-1);
+            end
+            if currentPowerdBm < obj.powerMinLimit
+                currentPowerdBm = obj.powerMinLimit;
+            end
+            obj.powerdBm(i) = currentPowerdBm;
+            obj.powerWsym(i) = (10.^(currentPowerdBm/10))*symunit('mW');
         end
-        % Создаем информацию о мощности в виде строки
-        function str = getInfoPowerdBm(obj)
-            name = obj.comPort;
-            param = obj.powerdBm(end);
-            param = num2strForPrint(param);
-            str = strcat("OPM on ",name," detect power ",param," dBm;");
-        end
-        % Чтение мощности в Ватт с автоопределением порядка
-        
-        % Создаем информацию о мощности в виде строки
-        
-        % 
-        % Создаем информацию о длине волны в виде строки
-        function obj = nextWavelength(obj)
-            nextWavelength = char(hex2dec('7B'));
-            write(obj.virtualObject,nextWavelength,"char");
-            read_wavelength = read(obj.virtualObject,2,"uint8");
-            obj.wavelength = read_wavelength(1)*256+read_wavelength(2);
-        end
-        % Закрытие COM-порта
         function obj = deleteVirtualObject(obj)
             flush(obj.virtualObject);
             delete(obj.virtualObject);
-        end
-        % Информация о закрытии COM-порта
-        function str = getInfoCloseCom(obj)
-            name = obj.comPort;
-            str = strcat("OPM on ",name," disconnected;");
         end
     end
 end
