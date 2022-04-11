@@ -29,6 +29,9 @@ classdef Device_OPMrubin
             obj = createWavelengthArray(obj);
             obj.wavelengthInd = 1;
             obj.numberMeasurement = 0;
+            obj.powerdBm = [];
+            obj.powerWsym = {};
+            obj.time = [];
         end
         function obj = createWavelengthArray(obj)
             obj.wavelengthArray = [];

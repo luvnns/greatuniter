@@ -17,10 +17,10 @@ classdef Device_OSAyokogawa
     end
     properties (Constant) % Commands
         connect = ['open "' obj.username '"']
-        commandFormat = 'CFORM1'
-        autoCalculate = ':CALCULATE:AUTO ' %ON
-        setSpectralWidthAtLevel = ':CALCULATE:PARAMETER:SWTHRESH: '%TH 3.00DB'
-        clearMarkers = ':CALCulate:LMARker:AOFF'
+        setCommandMode = 'CFORM1'
+        setAutomaticAnalysisFunction = ':CALCULATE:AUTO'% ' ON' %% p.7-52
+        setSpectralWidthAtLevel = ':CALCULATE:PARAMETER:SWTHRESH:TH' % 3.00DB'
+        clearAllLineMarkers = ':CALCulate:LMARker:AOFF' % p.7-52
         setStartWavelength = ':SENSe:WAVelength:STARt ' %obj.startWavelength 'NM'
         setStopWavelength =  ':SENSe:WAVelength:STOP ' %obj.stopWavelength 'NM'
         setSenseMode = ':SENSe:SENSe ' %obj.senseMode

@@ -8,7 +8,7 @@ classdef Device_SWITCHosaEdfa
         responseSwitchEDFA = convertCharsToStrings(['0;0' char(13)])
     end
     properties %for constructor
-        comPort
+        serialPort
     end
     properties
         virtualObject
@@ -18,8 +18,8 @@ classdef Device_SWITCHosaEdfa
     end
     methods (Access = public)
         function obj = Device_SWITCHosaEdfa(app)
-            obj.comPort = app.SerialportDropDown.Value;
-            obj.virtualObject = serialport(obj.comPort,obj.baudRate);
+            obj.serialPort = app.SerialportDropDown.Value;
+            obj.virtualObject = serialport(obj.serialPort,obj.baudRate);
             obj = requestSwitchState(obj);
         end
         function obj = requestSwitchState(obj)
