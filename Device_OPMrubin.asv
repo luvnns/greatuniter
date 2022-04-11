@@ -57,20 +57,20 @@ classdef Device_OPMrubin
             oldInd = obj.wavelengthInd;
             len = length(obj.wavelengthArray);
             for i = mod(len + newInd - oldInd, len)
-                requestNextWavelength(obj);
+                currentWavelength = requestNextWavelength(obj);
             end
             obj.wavelengthInd = newInd;
             % may be add check that new value matches
         end
-        function Wsym = autoSelectPrefix(obj,currentPowerdBm)
-            Wsym = (10^(currentPowerdBm/10)/1000)*symunit('W');
+        function WsymOutput = autoSelectPrefix(obj)
+            Wsym = (10^(obj.powerdBm(end)/10)/1000)*symunit('W');
             ind = length(obj.unitPrefixes);
-            sNum = separateUnits(Wsym);
+            [sNum,sUnits] = separateUnits(Wsym);
             Wnum = double(sNum);
             while Wnum < 1
                 ind = ind - 1;
-                newUnits = symunit(obj.unitPrefixes(ind));
-                Wsym = unitConvert(Wsym,newUnits);
+                newsUnits = symunit(obj.unitPrefixes(ind));
+                Wsym = unitConvert(Wsym,newsUnits);
             end
         end
         function obj = requestPower(obj)
@@ -87,7 +87,10 @@ classdef Device_OPMrubin
                 currentPowerdBm = obj.powerMinLimit;
             end
             obj.powerdBm(i) = currentPowerdBm;
-            obj.powerWsym(i) = autoSelectPrefix(obj,currentPowerdBm);
+            %%auto prefix
+            
+
+             obj.powerWsym(i)
         end
         function obj = deleteVirtualObject(obj)
             flush(obj.virtualObject);

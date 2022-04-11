@@ -96,7 +96,8 @@ classdef Device_OSAyokogawa
                 % Расчет спектральной ширины по уровню 3 db
                 writeline(obj.virtualObject, ':CALCULATE:PARAMETER:SWTHRESH: TH 3.00DB');
                 % Очищение всех маркеров
-                writeline(obj.virtualObject, ':CALCulate:LMARker:AOFF');
+                writeline(obj.virtualObject, ':CALCulate:LMARker:AOFF'); %
+            end
         end
         % Установка настроек снятия спектра
         function obj = applySettings(obj,app)

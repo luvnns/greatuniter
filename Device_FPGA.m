@@ -31,9 +31,9 @@ classdef Device_FPGA
         function output = whatFRM(obj,name)
             if ismember({name},obj.addressTable.Row)
                 currentRow = obj.addressTable(name,:);
-                output = currentRow.Type{1};
+                output = currentRow.FRM{1};
             else
-                output = 'NotFRM';
+                output = 'ERR';
             end
         end
         function obj = readData(obj,mem,name)
