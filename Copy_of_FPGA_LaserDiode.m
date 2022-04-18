@@ -1,12 +1,24 @@
-classdef FPGA_LaserDiode
-%     properties (Constant)
-%         deviceType = "Лазерный диод"
-%         nameCriteria1 = "Выходная мощность, дБм"
-%         nameCriteria2 = "Ток, подаваемый на диод"
-%     end
-     
+classdef LaserDiode
+    properties (Constant)
+        deviceType = "Лазерный диод"
+        nameCriteria1 = "Выходная мощность, дБм"
+        nameCriteria2 = "Ток, подаваемый на диод"
+    end
     properties
+        boardNumber
+        designation
+        serialNumber
+        comment
+        inspectorName
         operatingWavelength
+    end
+    properties
+        tableComponent
+        tableLaserDiode
+        folder
+        time
+    end
+    properties
         offset
         outputPower
         current
@@ -14,11 +26,25 @@ classdef FPGA_LaserDiode
         valueCriteria2
     end
     methods
-        function obj = FPGA_LaserDiode(app)
+        function obj = LaserDiode(app)
+            obj.boardNumber = app.BoardnumberEditField.Value;
+            obj.designation = app.DesignationEditField.Value;
+            obj.serialNumber = app.SerialnumberEditField.Value;
+            obj.comment = app.CommentEditField.Value;
+            obj.inspectorName = app.InspectornameEditField.Value;
             obj.operatingWavelength = app.OperatingwlEditField.Value;
+            
             obj.offset = app.LDDN_OFFSET_HIGH_RANGEEditField.Value;
             obj.outputPower = app.PoutputEditField.Value;
             obj.current = app.LDDN_CURRENTEditField.Value;
+            
+            if app.tableComponent == "не выбрана" || app.tableLaserDiode == "не выбрана"
+                error('Не все таблицы добавлены');
+            else
+                obj.tableComponent = app.tableComponent;
+                obj.tableLaserDiode = app.tableLaserDiode;
+            end
+            
             obj.folder = app.folder;
             obj.time = app.time;
         end

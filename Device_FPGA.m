@@ -24,7 +24,7 @@ classdef Device_FPGA
                     dos([obj.pathJTAGserverFolder 'run.bat&']);
                     obj.virtualObject =  tcpclient('localhost', 2540);
                 end
-            elseif obj.interface == "?"
+            %elseif obj.interface == "?"
             end
             obj = readData(obj,flashMem,"CC_TEST");
         end

@@ -2,12 +2,11 @@ classdef Device_OPMrubin
     properties (Constant)
         baudRate = 9600
         powerMinLimit = -60
-        dataType = "uint8"
-        bit = 8
+        bits = 2^8 %%?
         requestCurrentWavelengthCommand = char(hex2dec('7A'))
         requestNextWavelengthCommand = char(hex2dec('7B'))
         requestPowerCommand = char(hex2dec('82'))
-        unitPrefixes = {'nW','mcW','mW','W'} % if you want to change this constant, check autoSelectPrefix(obj)
+        unitPrefixes = {'nW','uW','mW','W'} % if you want to change this constant, check autoSelectPrefix(obj)
     end
     properties
         name
@@ -23,9 +22,9 @@ classdef Device_OPMrubin
         time
     end
     methods
-        function obj = Device_OPMrubin(appStruct)
-            obj.name = appStruct.OPMname;
-            obj.serialPort = appStruct.Serialport;
+        function obj = Device_OPMrubin(app)
+            obj.name = app.OPMnameEditField.Value;
+            obj.serialPort = app.SerialportDropDown.Value;
             obj.virtualObject = serialport(obj.serialPort,obj.baudRate);
             obj = createWavelengthArray(obj);
             obj.wavelengthInd = 1;
@@ -48,22 +47,28 @@ classdef Device_OPMrubin
         end
         function currentWavelength = requestCurrentWavelength(obj)
             write(obj.virtualObject,obj.requestCurrentWavelengthCommand,"char");
-            response = read(obj.virtualObject,2,obj.dataType);
-            currentWavelength = bitshift(response(1),obj.bit)+response(2);
+            response = read(obj.virtualObject,2,"uint8");% try uint16?
+            currentWavelength = response(1)*obj.bits+response(2);
         end
         function currentWavelength = requestNextWavelength(obj)
             write(obj.virtualObject,obj.requestNextWavelengthCommand,"char");
-            response = read(obj.virtualObject,2,obj.dataType);
-            currentWavelength = bitshift(response(1),obj.bit)+response(2);
+            response = read(obj.virtualObject,2,"uint8");
+            currentWavelength = response(1)*obj.bits+response(2);
         end
         function obj = setWavelength(obj,newWavelength) %newWavelength in num
             newInd = find(obj.wavelengthArray == newWavelength);% or index - input to func?
+            disp(newInd)
             oldInd = obj.wavelengthInd;
+            disp(oldInd)
             len = length(obj.wavelengthArray);
+            disp(len)
+            disp(mod(len + newInd - oldInd, len))
             for i = 1:mod(len + newInd - oldInd, len)
-                requestNextWavelength(obj);
+                currentWavelength = requestNextWavelength(obj);
+            disp(currentWavelength)
             end
             obj.wavelengthInd = newInd;
+            disp(newInd)
             % may be add check that new value matches
         end
         function Wsym = autoSelectPrefix(obj,currentPowerdBm)
@@ -84,8 +89,9 @@ classdef Device_OPMrubin
             i = obj.numberMeasurement;
             obj.time(i) = now;
             write(obj.virtualObject,obj.requestPowerCommand,"char");
-            response = read(obj.virtualObject,7,obj.dataType);
-            currentPowerdBm = (bitshift(response(1),obj.bit)+response(2))/100;
+            response = read(obj.virtualObject,7,"uint8");
+            disp(response)
+            currentPowerdBm = (response(1)*256+response(2))/100;
             if response(3) == 1
                 currentPowerdBm = currentPowerdBm*(-1);
             end
