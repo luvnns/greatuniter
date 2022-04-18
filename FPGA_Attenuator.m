@@ -48,7 +48,7 @@ classdef FPGA_Attenuator < FPGA_Component
             ind = find(obj.voltage == 3);
             obj.criteriaValues(2) = obj.attenuationCoefficientMeasure(ind);
         end
-        function obj = saveTables(obj)
+        function saveTables(obj)
             rowNames = readcell(obj.tableSamplePath,'Sheet','Sample');
             rowNames = rowNames(:,1);
             s1 = obj.boardNumber;

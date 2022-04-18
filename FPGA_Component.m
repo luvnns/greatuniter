@@ -18,7 +18,7 @@ classdef FPGA_Component
         function obj = FPGA_Component(appStruct)
             obj.time = appStruct.time;
             obj.folder = appStruct.folder;
-            obj.tableComponentsPath = appStruct.tableComponentPath;
+            obj.tableComponentsPath = appStruct.tableComponentsPath;
             obj.tableSamplePath = appStruct.tableSamplePath;
             obj.boardNumber = appStruct.boardNumber;
             obj.deviceType = "";
