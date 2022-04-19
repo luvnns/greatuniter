@@ -12,8 +12,8 @@ classdef Device_ATTENniMyDaq
         lastAttenuation
     end
     methods
-        function obj = Device_ATTENniMyDaq(app)
-            obj.funcAttenVolt = app.funcAttenVolt;
+        function obj = Device_ATTENniMyDaq(appStruct)
+            obj.funcAttenVolt = appStruct.funcAttenVolt;
             obj.virtualObject = daq("ni");
             addoutput(obj.virtualObject, obj.name, obj.channel, obj.type);
             %obj = setAttenuation(obj,0);

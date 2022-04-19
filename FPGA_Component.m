@@ -7,7 +7,7 @@ classdef FPGA_Component
         boardNumber
         deviceType
         designation
-        fpgaName
+        FPGAaddressName
         serialNumber
         comment
         inspectorName

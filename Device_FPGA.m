@@ -14,9 +14,9 @@ classdef Device_FPGA
         lastRead
     end
     methods
-        function obj = Device_FPGA(app)
-            obj.interface = app.InterfaceDropDown.Value;
-            obj.addressTable = app.mainTable;
+        function obj = Device_FPGA(appStruct)
+            obj.interface = appStruct.InterfaceDropDown;
+            obj.addressTable = appStruct.mainTable;
             if obj.interface == "JTAG"
                 try
                     obj.virtualObject =  tcpclient('localhost', 2540);

@@ -17,8 +17,8 @@ classdef Device_SWITCHosaEdfa
         infoString
     end
     methods (Access = public)
-        function obj = Device_SWITCHosaEdfa(app)
-            obj.serialPort = app.SerialportDropDown.Value;
+        function obj = Device_SWITCHosaEdfa(appStruct)
+            obj.serialPort = appStruct.SerialportDropDown;
             obj.virtualObject = serialport(obj.serialPort,obj.baudRate);
             obj = requestSwitchState(obj);
         end
