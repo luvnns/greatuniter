@@ -12,8 +12,8 @@ classdef FPGA_LaserDiode < FPGA_Component
     methods
         function obj = FPGA_LaserDiode(appStruct)
             obj = obj@FPGA_Component(appStruct);
-            obj.operatingWavelength_nm = appStruct.operatingWavelength_nm;%%%
-            obj.offsetHighRange = appStruct.offsetHighRange;%%%
+            obj.operatingWavelength_nm = appStruct.operatingWavelength_nm;
+            obj.offsetHighRange = appStruct.offsetHighRange;
             obj.deviceType = obj.deviceTypeConst;
             obj.index = 0;
         end
@@ -48,5 +48,4 @@ classdef FPGA_LaserDiode < FPGA_Component
             appendTableComponents(obj);
         end
     end
-
 end

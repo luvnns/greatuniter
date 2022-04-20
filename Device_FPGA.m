@@ -1,5 +1,5 @@
 classdef Device_FPGA
-    properties (Constant) % may not be constant?
+    properties (Constant)
         pathJTAGserverFolder = 'E:\greatuniter\'
         newLine = char([13 10])
         flashMem = "FLASH"
@@ -9,6 +9,7 @@ classdef Device_FPGA
         virtualObject
         interface
         addressTable
+        addressTablePath
     end
     properties
         lastRead
@@ -16,7 +17,7 @@ classdef Device_FPGA
     methods
         function obj = Device_FPGA(appStruct)
             obj.interface = appStruct.InterfaceDropDown;
-            obj.addressTable = appStruct.mainTable;
+            obj.addressTablePath = appStruct.addressTablePath;
             if obj.interface == "JTAG"
                 try
                     obj.virtualObject =  tcpclient('localhost', 2540);
@@ -26,18 +27,42 @@ classdef Device_FPGA
                 end
             %elseif obj.interface == "?"
             end
+            obj = readAddressTable(obj);
             obj = readData(obj,flashMem,"CC_TEST");
         end
+        function obj = readAddressTable(obj)
+                % filename = 'ADDRESS.txt';
+                fileID = fopen(obj.addressTablePath,'r+');
+                reading_txt = fscanf(fileID,'%c');
+                fclose(fileID);
+                address_cell = regexp(reading_txt,'[^# ](\w{4}) = \[(\d*)\] = (\w*) = (\w*.\w*) =',...
+                    'tokens');
+                number_of_cell = length(address_cell);
+                address_cell_Name = strings(number_of_cell,1);
+                address_cell_Address = cell(number_of_cell,1);
+                address_cell_Number_of_bits = cell(number_of_cell,1);
+                address_cell_Type = strings(number_of_cell,1);
+                address_Data = cell(number_of_cell,1);
+                for i = 1:number_of_cell
+                    address_cell_Name(i) = address_cell{1,i}{1,4};
+                    address_cell_Address(i) = address_cell{1,i}(1);
+                    address_cell_Number_of_bits(i) = address_cell{1,i}(2);
+                    address_cell_Type(i) = address_cell{1,i}{1,3};
+                end
+                obj.addressTable = table(address_cell_Address,address_cell_Number_of_bits,address_cell_Type,address_Data,...
+                    'RowNames',address_cell_Name',...
+                    'VariableNames',{'ADDR','BITS','FRM','DATA'});
+        end
         function output = whatFRM(obj,name)
-            if ismember({name},obj.addressTable.Row)
-                currentRow = obj.addressTable(name,:);
+            if ismember({name},obj.addressTablePath.Row)
+                currentRow = obj.addressTablePath(name,:);
                 output = currentRow.FRM{1};
             else
                 output = 'ERR';
             end
         end
         function obj = readData(obj,mem,name)
-            currentRow = obj.addressTable(name,:);
+            currentRow = obj.addressTablePath(name,:);
             ADDR = currentRow.ADDR{1,1};
             if mem == obj.flashMem
                 ADDR(1) = '0';
@@ -82,7 +107,7 @@ classdef Device_FPGA
             obj.lastRead = currentRow.Data;
         end
         function obj = writeData(obj,mem,name,data)
-            currentRow = obj.addressTable(name,:);
+            currentRow = obj.addressTablePath(name,:);
             ADDR = currentRow.ADDR{1,1};
             if mem == obj.flashMem
                 ADDR(1) = '4';
@@ -113,118 +138,11 @@ classdef Device_FPGA
             obj = writeData(obj,mem,name,data);
             obj = readData(obj,mem,name);
         end
-%         try
-%                 %переписать эту часть
-%                 a = str2double(obj.lastRead);
-%                 b = str2double(wvalueinit);
-%                 %                 disp(a)
-%                 %                 disp(b)
-%                 if isequal(currentRow.Type,'FLO') && a ~= b
-%                     str = ['Значение' wvalueinit ' не записалось'];
-%                     error(str);
-%                 elseif (isequal(currentRow.Type,'HEX') || isequal(currentRow.Type,'USG') || isequal(currentRow.Type,'SIG')) && ~isequal(obj.lastRead,wvalueinit)
-%                     str = ['Значение' wvalueinit ' не записалось'];
-%                     error(str);
-%                 end
-% 
-%             catch ME
-%                 fig = uifigure;
-%                 uialert(fig,ME.message,'Failed');
-%             end
-        
-
-        % Проверка, что существует указанное имя
-        % Можно добавить, что введенное значение не выпадает из диапазона
-        %         function logicOutput = isNameExist(obj,name)
-        %             if ismember({name},obj.addressTable.Row)
-        %                 logicOutput = true;
-        %             else
-        %                 logicOutput = false;
-        %             end
-        %         end
-
-
-        %         % Проверка подключения
-        %         function output = isConnected(obj)
-        %             name = obj.addressTable.Row{1};
-        %             obj = readDataFromFPGA(obj,name);
-        %
-        %         end
-        % Закрытие соединения
-        %         function obj = enableBERT(obj,number)
-        %             % number = 1,2,...
-        %             numberStr = num2str(number);
-        %             BERT_EN_name = ['BERT_EN_' numberStr];
-        %             obj = writeDataToFPGA(obj,BERT_EN_name,'1');
-        %         end
-        %         function obj = disableBERT(obj,number)
-        %             % number = 1,2,...
-        %             numberStr = num2str(number);
-        %             BERT_EN_name = ['BERT_EN_' numberStr];
-        %             obj = writeDataToFPGA(obj,BERT_EN_name,'0');
-        %         end
-        %         function result = checkForLink(obj,number)
-        %             % Значение number = 1, 2, 3 или 4
-        %             number = num2str(number);
-        %
-        %             BERT_LOCKED_name = ['BERT_LOCKED_' number];
-        %             obj = readDataFromFPGA(obj,BERT_LOCKED_name);
-        %             result = str2double(obj.lastRead); % 1 или 0
-        %         end
-        %         function result = checkBERT(obj,number)
-        %             % Значение number = 1, 2, 3 или 4
-        %             number = num2str(number);
-        %
-        %             BERT_EN_name = ['BERT_EN_' number];
-        %             obj = readDataFromFPGA(obj,BERT_EN_name);
-        %             BERT_EN = str2double(obj.lastRead);
-        %             if BERT_EN == 0
-        %                 error('BERT disable');
-        %             end
-        %
-        %             % Чтение этого параметра обновляет проверку
-        %             BERT_UPDATE_name = ['BERT_UPDATE_' number];
-        %             obj = readDataFromFPGA(obj,BERT_UPDATE_name);
-        %             %BERT_UPDATE = str2double(obj.lastRead);
-        %
-        %             BERT_RX_DATA_name = ['BERT_RX_DATA_' number];
-        %             obj = readDataFromFPGA(obj,BERT_RX_DATA_name);
-        %             BERT_RX_DATA = str2double(obj.lastRead);
-        %
-        %             BERT_RX_ERR_name = ['BERT_RX_ERR_' number];
-        %             obj = readDataFromFPGA(obj,BERT_RX_ERR_name);
-        %             BERT_RX_ERR = str2double(obj.lastRead);
-        %
-        %             BERT_LOCKED_name = ['BERT_LOCKED_' number];
-        %             obj = readDataFromFPGA(obj,BERT_LOCKED_name);
-        %             BERT_LOCKED = str2double(obj.lastRead);
-        %
-        %             BERT_BER = BERT_RX_ERR / BERT_RX_DATA;
-        %
-        %             result = struct('BERT_EN',BERT_EN,...
-        %                 'BERT_RX_DATA',BERT_RX_DATA,...
-        %                 'BERT_RX_ERR',BERT_RX_ERR,...
-        %                 'BERT_BER',BERT_BER,...
-        %                 'BERT_LOCKED',BERT_LOCKED);
-        %             % к структуре можно обращаться result.BERT_EN и тд
-        %         end
-        %         function obj = turnOnOffDiodes(obj,state)
-        %             % state = 'on', 'off'
-        %             name = 'LDD_EN';
-        %             if isequal(state,'on')
-        %                 wvalue = 'F';
-        %             elseif isequal(state,'off')
-        %                 wvalue = '0';
-        %             end
-        %             obj = writeDataToFPGA(obj,name,wvalue);
-        %         end
-        %         function obj = setValueToLddCurrent(obj,LDnumber,valueNum)
-        %             %LDnumber - num, valueNum - num
-        %             number = num2str(LDnumber);
-        %             fpgaName = ['LDD' number '_CURRENT'];
-        %             wvalue = num2str(valueNum);
-        %             obj = writeDataToFPGA(obj,fpgaName,wvalue);
-        %         end
+        function obj = setDiodes(obj,binInput) 
+            % binInput = 0b0000 => turn off all diodes
+            data = char(compose("%X",binInput));
+            obj = writeAndReadData(obj,obj.flashMem,'LDD_EN',data);
+        end
         function obj = deleteVirtualObject(obj)
             flush(obj.virtualObject);
             delete(obj.virtualObject);
