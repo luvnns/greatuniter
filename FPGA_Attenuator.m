@@ -15,6 +15,9 @@ classdef FPGA_Attenuator < FPGA_Component
         attenuationCoefficientMeasure % calc
         attenuationCoefficientDatasheet % usually empty
     end
+    properties
+        tableName
+    end
     methods
         function obj = FPGA_Attenuator(appStruct)
             obj = obj@FPGA_Component(appStruct);
@@ -54,14 +57,14 @@ classdef FPGA_Attenuator < FPGA_Component
             s1 = obj.boardNumber;
             s2 = obj.designation;
             s3 = createFilename(obj.time);
-            tableName = ['B' s1 '_' s2 '_' s3];
-            sheetName = createFilename(obj.time,'AT');
+            obj.tableName = ['B' s1 '_' s2 '_' s3];
+            sheetName = obj.tableName; %createFilename(obj.time,'AT');
             arrayForSave = {obj.boardNumber;obj.deviceType;obj.designation;...
                 obj.FPGAaddressName,obj.serialNumber;obj.comment;obj.inspectorName;...
                 obj.inputPower;obj.outputPower;obj.attenuationCoefficientMeasure;...
                 obj.attenuationCoefficientDatasheet;obj.voltage;obj.DAC;obj.pauseTime};
             tableForSave = table(arrayForSave,'RowNames',rowNames);
-            writetable(tableForSave,[obj.folder tableName '.xlsx'],'Sheet',sheetName,...
+            writetable(tableForSave,[obj.folder obj.tableName '.xlsx'],'Sheet',sheetName,...
                 'WriteVariableNames',false,'WriteRowNames',true,...
                 'WriteMode','append','AutoFitWidth',false);
             appendTableComponents(obj);
