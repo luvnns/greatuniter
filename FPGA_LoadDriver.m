@@ -7,6 +7,7 @@ classdef FPGA_LoadDriver < FPGA_Component
     properties
         offsetHighRangeFromEEPROM % from UI (FPGA)
         index % = zero at start
+        maxIndex
         current_mA % calc I = U/R at the end
         voltage_mV % from UI
         DAC % from table
@@ -18,16 +19,23 @@ classdef FPGA_LoadDriver < FPGA_Component
         function obj = FPGA_LoadDriver(appStruct)
             obj = obj@FPGA_Component(appStruct);
             obj.deviceType = obj.deviceTypeConst;
-            obj.index = 0;
             tableSample = readtable(obj.tableSamplePath,'Sheet','Sample',...
                     'ReadVariableNames',false,'ReadRowNames',true);
             obj.DAC = tableSample{obj.DACrowName,:};
-            len = length(obj.DAC);
-            obj.current_mA = zeros(1,len);
-            obj.voltage_mV = zeros(1,len);
+            obj.maxIndex = length(obj.DAC);
+            obj = clearTest(obj);
+        end
+        function obj = clearTest(obj)
+            obj.index = 0;
+            obj.current_mA = zeros(1,obj.maxIndex);
+            obj.voltage_mV = zeros(1,obj.maxIndex);
         end
         function obj = addOffsetHighRangeFromEEPROM(obj,offsetHighRangeNum)
             obj.offsetHighRangeFromEEPROM = offsetHighRangeNum;
+        end
+        function DAC = nextDAC(obj)
+            obj.index = obj.index + 1;
+            DAC = obj.DAC(obj.index);
         end
         function obj = addVoltageAndCalcCurrent(obj,voltage_mV)
             obj.index = obj.index + 1;
@@ -51,7 +59,7 @@ classdef FPGA_LoadDriver < FPGA_Component
             arrayForSave = {obj.boardNumber;obj.deviceType;obj.designation;...
                 obj.serialNumber;obj.comment;obj.inspectorName;...
                 obj.offsetHighRangeFromEEPROM,obj.current_mA...
-                obj.voltage_mV;obj.DAC};/
+                obj.voltage_mV;obj.DAC};
             tableForSave = table(arrayForSave,'RowNames',rowNames);
             writetable(tableForSave,[obj.folder obj.tableName '.xlsx'],'Sheet',sheetName,...
                 'WriteVariableNames',false,'WriteRowNames',true,...
