@@ -18,7 +18,6 @@ classdef Device_FPGA
     end
     properties
         lastRead
-        currentLinks %ex, = '0010' - link at 2nd transc (positions 4321)
     end
     methods
         function obj = Device_FPGA(appStruct)
@@ -170,7 +169,8 @@ classdef Device_FPGA
         end
         function obj = checkLink(obj)
             obj = readData(obj,obj.flashMem,obj.OSC_SFF_SD);
-            obj.currentLinks = hexToFourBits(obj.lastRead);
+binStr = hexToFourBits(hexStr)
+        
         end
         function obj = deleteVirtualObject(obj)
             flush(obj.virtualObject);
