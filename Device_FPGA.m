@@ -28,13 +28,13 @@ classdef Device_FPGA
                 try
                     obj.virtualObject =  tcpclient('localhost', 2540);
                 catch
-                    dos([obj.pathJTAGserverFolder 'run.bat&']);
-                    obj.virtualObject =  tcpclient('localhost', 2540);
+                    %dos([obj.pathJTAGserverFolder 'run.bat&']);
+                    %obj.virtualObject =  tcpclient('localhost', 2540);
                 end
             %elseif obj.interface == "?"
             end
             obj = readAddressTable(obj);
-            obj = readData(obj,flashMem,"CC_TEST");
+            %obj = readData(obj,flashMem,"CC_TEST");
         end
         function obj = readAddressTable(obj)
                 % filename = 'ADDRESS.txt';
@@ -60,15 +60,15 @@ classdef Device_FPGA
                     'VariableNames',{'ADDR','BITS','FRM','DATA'});
         end
         function output = whatFRM(obj,name)
-            if ismember({name},obj.addressTablePath.Row)
-                currentRow = obj.addressTablePath(name,:);
+            if ismember({name},obj.addressTable.Row)
+                currentRow = obj.addressTable(name,:);
                 output = currentRow.FRM{1};
             else
                 output = 'ERR';
             end
         end
         function obj = readData(obj,mem,name)
-            currentRow = obj.addressTablePath(name,:);
+            currentRow = obj.addressTable(name,:);
             ADDR = currentRow.ADDR{1,1};
             if mem == obj.flashMem
                 ADDR(1) = '0';
@@ -113,7 +113,7 @@ classdef Device_FPGA
             obj.lastRead = currentRow.Data;
         end
         function obj = writeData(obj,mem,name,data)
-            currentRow = obj.addressTablePath(name,:);
+            currentRow = obj.addressTable(name,:);
             ADDR = currentRow.ADDR{1,1};
             if mem == obj.flashMem
                 ADDR(1) = '4';
