@@ -1,11 +1,10 @@
 classdef Device_FPGA
     properties (Constant)
-        pathJTAGserverFolder = 'E:\greatuniter\'
-        newLine = char([13 10])
-        flashMem = "FLASH"
-        eepromMem = "EEPROM"
+        NEW_LINE = char([13 10])
+        FLASH_MEM = 'FLASH'
+        EEPROM_MEM = 'EEPROM'
     end
-    properties
+    properties (Constant)
         LDD_EN = 'LDD_EN'
         OSC_SFF_ENABLE = 'OSC_SFF_ENABLE'
         OSC_SFF_SD = 'OSC_SFF_SD'
@@ -15,6 +14,7 @@ classdef Device_FPGA
         interface
         addressTable
         addressTablePath
+        JTAGserverFolderPath
     end
     properties
         lastRead
@@ -24,17 +24,22 @@ classdef Device_FPGA
         function obj = Device_FPGA(appStruct)
             obj.interface = appStruct.InterfaceDropDown;
             obj.addressTablePath = appStruct.addressTablePath;
+            obj.JTAGserverFolderPath = [pwd filesep];
             if obj.interface == "JTAG"
                 try
                     obj.virtualObject =  tcpclient('localhost', 2540);
                 catch
-                    %dos([obj.pathJTAGserverFolder 'run.bat&']);
-                    %obj.virtualObject =  tcpclient('localhost', 2540);
+                    dos([obj.JTAGserverFolderPath 'run.bat&']);
+                    obj.virtualObject =  tcpclient('localhost', 2540);
                 end
             %elseif obj.interface == "?"
             end
             obj = readAddressTable(obj);
-            %obj = readData(obj,flashMem,"CC_TEST");
+            obj = readData(obj,obj.FLASH_MEM,"CC_TEST");
+        end
+        function result = test(obj)
+            obj = readData(obj,obj.FLASH_MEM,"CC_TEST");
+            result = obj.lastRead;
         end
         function obj = readAddressTable(obj)
                 % filename = 'ADDRESS.txt';
@@ -70,14 +75,14 @@ classdef Device_FPGA
         function obj = readData(obj,mem,name)
             currentRow = obj.addressTable(name,:);
             ADDR = currentRow.ADDR{1,1};
-            if mem == obj.flashMem
+            if mem == obj.FLASH_MEM
                 ADDR(1) = '0';
-            elseif mem == obj.eepromMem
+            elseif mem == obj.EEPROM_MEM
                 ADDR(1) = '2';
             end
             BITS = str2double(currentRow.BITS{1,1});
             FRM = currentRow.FRM;
-            writeline(obj.virtualObject, [ADDR ' ' '0' obj.newLine]);
+            writeline(obj.virtualObject, [ADDR ' ' '0' obj.NEW_LINE]);
             receivedDataStr = readline(obj.virtualObject);
             receivedDataChar = char(receivedDataStr);
             receivedData = receivedDataChar(6:end-1);
@@ -115,9 +120,9 @@ classdef Device_FPGA
         function obj = writeData(obj,mem,name,data)
             currentRow = obj.addressTable(name,:);
             ADDR = currentRow.ADDR{1,1};
-            if mem == obj.flashMem
+            if mem == obj.FLASH_MEM
                 ADDR(1) = '4';
-            elseif mem == obj.eepromMem
+            elseif mem == obj.EEPROM_MEM
                 ADDR(1) = '6';
             end
             BITS = str2double(currentRow.BITS{1,1});
@@ -138,7 +143,7 @@ classdef Device_FPGA
                 wvalue = str2double(data);
                 sentData = dec2hex(wvalue,16);
             end
-            writeline(obj.virtualObject,[ADDR ' ' sentData obj.newLine]);
+            writeline(obj.virtualObject,[ADDR ' ' sentData obj.NEW_LINE]);
         end
         function obj = writeAndReadData(obj,mem,name,data)
             obj = writeData(obj,mem,name,data);
@@ -159,17 +164,17 @@ classdef Device_FPGA
             % Ex: binInput = '0010' => turn on only 2nd diode
             % diodes positions are 4321 in binInput
             data = fourBitsToHex(binInput);
-            obj = writeAndReadData(obj,obj.flashMem,obj.LDD_EN,data);
+            obj = writeAndReadData(obj,obj.FLASH_MEM,obj.LDD_EN,data);
         end
         function obj = setTransceiversEn(obj,binInput) 
             % Ex: binInput = '0000' => turn off all transceivers
             % Ex: binInput = '0010' => turn on only 2nd transceiver
             % transceivers positions are 4321 in binInput
             data = fourBitsToHex(binInput);
-            obj = writeAndReadData(obj,obj.flashMem,obj.OSC_SFF_ENABLE,data);
+            obj = writeAndReadData(obj,obj.FLASH_MEM,obj.OSC_SFF_ENABLE,data);
         end
         function obj = checkLink(obj)
-            obj = readData(obj,obj.flashMem,obj.OSC_SFF_SD);
+            obj = readData(obj,obj.FLASH_MEM,obj.OSC_SFF_SD);
             obj.currentLinks = hexToFourBits(obj.lastRead);
         end
         function obj = deleteVirtualObject(obj)
