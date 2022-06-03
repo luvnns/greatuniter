@@ -10,18 +10,19 @@ classdef Device_OSAyokogawa
     end
     properties (Constant)
         PORT = 10001;
-        USERNAME = 'admin'
-        PASSWORD = 'admin'
         PASSWORD_RESPONSE = "ready"
         TRACES = 'ABCDEFG';
     end
     properties (Constant) % Requests
         % if name ends with "_X" it requires number and maybe units
-        connect1 = ['open "' obj.username '"'] %OPEN_TEXT
-        setCommandMode = 'CFORM1' %REQUESTS_MODE
-        setAutomaticAnalysisFunction = ':CALCULATE:AUTO'% ' ON' %% p.7-52 %CALC_MODE_AUTO
-        setSpectralWidthAtLevel = ':CALCULATE:PARAMETER:SWTHRESH:TH 3.00DB' %SWTHRESH_X
-        clearAllLineMarkers = ':CALCulate:LMARker:AOFF' % p.7-52 %LMARKER_AOFF
+        CONNECT_USERNAME= 'open "admin"'
+        PASSWORD = 'admin'
+        REQUESTS_MODE = 'CFORM1' % Установка формата команд
+        CALC_MODE_AUTO = ':CALCULATE:AUTO ON' % Установка авто измерения в вкл % 7-52
+        SWTHRESH = ':CALCULATE:PARAMETER:SWTHRESH:TH 3.00DB' % Расчет спектральной ширины по уровню 3 db
+        LMARKER_AOFF = ':CALCulate:LMARker:AOFF' % p.7-52 %% Очищение всех маркеров
+
+
         setStartWavelength = ':SENSe:WAVelength:STARt ' %obj.startWavelength 'NM' %WAVELENGTH_START_X
         setStopWavelength =  ':SENSe:WAVelength:STOP ' %obj.stopWavelength 'NM' %WAVELENGTH_STOP_X
         setSenseMode = ':SENSe:SENSe ' %obj.senseMode %SENSE_MODE_X
@@ -42,7 +43,7 @@ classdef Device_OSAyokogawa
         requestCalcData = ':calc:data?'%); %ANALYSIS_READ
         setPowerOffset = ':CALCulate:PARameter:POWer:OFFset ' %OFFSET_POW_X
         setInOffset = ':CALCulate:PARameter:NF:IOFFset ' %OFFSET_NFIN_X
-        setOutOffset = ':CALCulate:PARameter:NF:OOFFset ' %OFFSET_NFOUT_X
+        OFFSET_NFOUT_X = ':CALCulate:PARameter:NF:OOFFset ' %
     end
     properties
         startWavelength
@@ -72,36 +73,47 @@ classdef Device_OSAyokogawa
     end
     methods
         function obj = Device_OSAyokogawa(appStruct)
-                obj.folder = appStruct.folder;
-                obj.userText = appStruct.userText;
-                obj.ipAddress = appStruct.IPaddressEditField.Value;
-                obj.timeOut = appStruct.TimeoutEditField.Value;
-                obj.referenceTrace = appStruct.ReferencetraceDropDown.Value;
-                obj.waveformTrace = appStruct.WaveformtraceDropDown.Value;
+            % Constructor of class
+            obj.folder = appStruct.folder;
+            obj.userText = appStruct.userText;
+            obj.ipAddress = appStruct.IPaddressEditField.Value;
+            obj.timeOut = appStruct.TimeoutEditField.Value;
+            obj.referenceTrace = appStruct.ReferencetraceDropDown.Value;
+            obj.waveformTrace = appStruct.WaveformtraceDropDown.Value;
+            try
+                obj = connect(obj);
+            catch
+                disp()
+            end
 
-                obj.virtualObject = tcpclient(obj.ipAddress, obj.PORT, 'Timeout', obj.timeOut);
-                configureTerminator(obj.virtualObject,"CR/LF");
-                reguest = ['open "' obj.USERNAME '"']; % создание запроса для ОСА
-                writeline(obj.virtualObject,reguest); % отправка запроса
-                usernameResponse = readline(obj.virtualObject); % получение ответа
-                writeline(obj.virtualObject,obj.PASSWORD);
-                passwordResponse = readline(obj.virtualObject);
-                obj.isReady = passwordResponse == obj.PASSWORD_RESPONSE;
-                %
-                obj.numberMeasurement = 0;
-                obj.waveform = {};
-                obj.analysisEDFANF = {};
-                % Установка формата команд
-                writeline(obj.virtualObject,'CFORM1');
-                % Установка авто измерения в вкл
-                writeline(obj.virtualObject, ':CALCULATE:AUTO ON'); % 7-52
-                % Расчет спектральной ширины по уровню 3 db
-                writeline(obj.virtualObject, ':CALCULATE:PARAMETER:SWTHRESH: TH 3.00DB');
-                % Очищение всех маркеров
-                writeline(obj.virtualObject, ':CALCulate:LMARker:AOFF');
+            obj.numberMeasurement = 0;
+            obj.waveform = {};
+            obj.analysisEDFANF = {};
         end
+    end
+
+    methods (Access = private, Hidden)
         function obj = connect(obj)
+            obj.virtualObject = tcpclient(obj.ipAddress, obj.PORT, 'Timeout', obj.timeOut);
+            configureTerminator(obj.virtualObject,"CR/LF");
+            writeline(obj.virtualObject,obj.CONNECT_USERNAME);
+            usernameResponse = readline(obj.virtualObject);
+            writeline(obj.virtualObject,obj.PASSWORD);
+            passwordResponse = readline(obj.virtualObject);
+            obj.isReady = passwordResponse == obj.PASSWORD_RESPONSE;
+            if obj.isReady == false
+                error('OSA not ready');
+            end
         end
+        function obj = startRequests(obj)
+            writeline(obj.virtualObject,obj.REQUESTS_MODE);
+            writeline(obj.virtualObject,obj.CALC_MODE_AUTO);
+            writeline(obj.virtualObject,obj.SWTHRESH);
+            writeline(obj.virtualObject,obj.LMARKER_AOFF);
+        end
+    end
+
+    methods
         % Установка настроек снятия спектра
         function obj = applySettings(obj,app)
             % Установка начальной длины волны
@@ -209,7 +221,7 @@ classdef Device_OSAyokogawa
             % сколько после этого числа будет
             % байт информации.
             % Подробнее см. инструкцию к ОСА.
-            
+
             % Перевод строки в массив символов
             % (удобнее для сравнения и вычисления длины)
             data_first_line = char(data_first_line);
@@ -258,7 +270,7 @@ classdef Device_OSAyokogawa
             % сколько после этого числа будет
             % байт информации.
             % Подробнее см. инструкцию к ОСА.
-            
+
             % Перевод строки в массив символов
             % (удобнее для сравнения и вычисления длины)
             data_first_line = char(data_first_line);
@@ -313,10 +325,10 @@ classdef Device_OSAyokogawa
             xlabel(app.UIAxesLog,'Wavelength, nm');
             ylabel(app.UIAxesLog,'Power, dBm');
             plot(app.UIAxesLog,x,y);
-%             title(app.UIAxesLine,'Spectrum (line)');
-%             xlabel(app.UIAxesLine,'Wavelength, nm');
-%             ylabel(app.UIAxesLine,'Power, mkW');
-%             plot(app.UIAxesLine,x,yLine);
+            %             title(app.UIAxesLine,'Spectrum (line)');
+            %             xlabel(app.UIAxesLine,'Wavelength, nm');
+            %             ylabel(app.UIAxesLine,'Power, mkW');
+            %             plot(app.UIAxesLine,x,yLine);
         end
         % Чтение данных анализа EDFA-NF из файла на ОСА
         function obj = readAnalysisEDFANF(obj)
@@ -354,7 +366,7 @@ classdef Device_OSAyokogawa
             i = obj.numberMeasurement;
             obj.analysisEDFANF(i) = {array2table(OSA_edfa_nf,...
                 'VariableNames', OSA_edfa_nf_names)};
-            
+
             % К данным в таблице можно обращаться так: OSA_edfa_nf_table.ch_num
             % Вместо ch_num можно использовать другое название столбца
             edfanfForVar = obj.analysisEDFANF(i);
@@ -410,23 +422,22 @@ classdef Device_OSAyokogawa
             fullFilename = [obj.folder obj.userText '_' filename '.xlsx'];
             writematrix(obj.power,fullFilename);
         end
-        % Выставление оффсетов
         function applyOffsetSettings(obj,offsetValue,type)
             % offsetValue = '' (str)
             % type = 'power','in','out'
-            if isequal(type,'power')
-                request = [':CALCulate:PARameter:POWer:OFFset ' offsetValue];
-            elseif isequal(type,'in')
-                request = [':CALCulate:PARameter:NF:IOFFset ' offsetValue];
-            elseif isequal(type,'out')
-                request = [':CALCulate:PARameter:NF:OOFFset ' offsetValue];
-            end
-            writeline(obj.virtualObject,request);
             % manual 7-32
             % ":PARameter:NF:IOFFset <NRf>[DB]"  % 7-61 manual
             % ":PARameter:NF:OOFFset <NRf>[DB]"  % 7-62 manual
             % ":PARameter:POWer:OFFSet <NRf>[DB]"  % 7-64 manual
             % <NRf>[DB] = 10.00
+            if type == "power"
+                request = obj.OFFSET_POWER_X;
+            elseif type == "in"
+                request = obj.OFFSET_NFIN_X;
+            elseif type == "out"
+                request = obj.OFFSET_NFOUT_X;
+            end
+            writeline(obj.virtualObject,[request offsetValue]);
         end
         function obj = deleteVirtualObject(obj)
             flush(obj.virtualObject);
