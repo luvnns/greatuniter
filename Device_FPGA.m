@@ -20,7 +20,7 @@ classdef Device_FPGA
         lastRead
         currentLinks %ex, = '0010' - link at 2nd transc (positions 4321)
     end
-    methods
+    methods (Hidden)
         function obj = Device_FPGA(appStruct)
             obj.interface = appStruct.InterfaceDropDown;
             obj.addressTablePath = appStruct.addressTablePath;
@@ -37,6 +37,7 @@ classdef Device_FPGA
             obj = readAddressTable(obj);
             obj = readData(obj,obj.FLASH_MEM,"CC_TEST");
         end
+    
         function result = test(obj)
             obj = readData(obj,obj.FLASH_MEM,"CC_TEST");
             result = obj.lastRead;
@@ -64,6 +65,8 @@ classdef Device_FPGA
                     'RowNames',address_cell_Name',...
                     'VariableNames',{'ADDR','BITS','FRM','DATA'});
         end
+        end
+    methods
         function output = whatFRM(obj,name)
             if ismember({name},obj.addressTable.Row)
                 currentRow = obj.addressTable(name,:);
@@ -118,6 +121,7 @@ classdef Device_FPGA
             obj.lastRead = currentRow.Data;
         end
         function obj = writeData(obj,mem,name,data)
+            % data format must be string
             currentRow = obj.addressTable(name,:);
             ADDR = currentRow.ADDR{1,1};
             if mem == obj.FLASH_MEM
@@ -146,6 +150,7 @@ classdef Device_FPGA
             writeline(obj.virtualObject,[ADDR ' ' sentData obj.NEW_LINE]);
         end
         function obj = writeAndReadData(obj,mem,name,data)
+            % data format must be string
             obj = writeData(obj,mem,name,data);
             obj = readData(obj,mem,name);
         end
