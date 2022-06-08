@@ -4,7 +4,7 @@ if isequal(mode,'in')
     Pnum = ['PIN' VD_ADC(end-1:end)];
     xLabel = 'P input (real OPM), mW';
     powerMeasure = tableVD{:,'InputPowerRealMW'};
-    %x_mW = 0:0.001:5;
+    %x_mW = 0:0.001:5; 
     x_dBm = -40:0.1:5;
 elseif isequal(mode,'out')
     Pnum = ['POUT' VD_ADC(end-1:end)];

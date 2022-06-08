@@ -1,13 +1,4 @@
 classdef Device_OSAyokogawa
-    properties
-        ipAddress
-        timeOut
-        isReady
-        virtualObject
-        waveformTrace
-        folder
-        userText
-    end
     properties (Constant)
         PORT = 10001;
         PASSWORD_RESPONSE = "ready"
@@ -21,29 +12,41 @@ classdef Device_OSAyokogawa
         CALC_MODE_AUTO = ':CALCULATE:AUTO ON' % Установка авто измерения в вкл % 7-52
         SWTHRESH = ':CALCULATE:PARAMETER:SWTHRESH:TH 3.00DB' % Расчет спектральной ширины по уровню 3 db
         LMARKER_AOFF = ':CALCulate:LMARker:AOFF' % p.7-52 %% Очищение всех маркеров
-
-
-        setStartWavelength = ':SENSe:WAVelength:STARt ' %obj.startWavelength 'NM' %WAVELENGTH_START_X
-        setStopWavelength =  ':SENSe:WAVelength:STOP ' %obj.stopWavelength 'NM' %WAVELENGTH_STOP_X
-        setSenseMode = ':SENSe:SENSe ' %obj.senseMode %SENSE_MODE_X
-        setBandwidth = ':SENSe:BANDwidth ' %obj.resolution 'NM' %SENSE_BANDWIDTH_X
-        setReferenceLevel = ':DISPlay:TRACe:Y1:RLEVel ' %obj.referenceLevel 'dbm' %REFERENSE_LEVEL_X
-        setlevelScale = ':DISPlay:TRACe:Y1:PDIVision ' %obj.levelScale 'DB' %LEVEL_SCALE
-        setTraceActive = ':TRACe:ACTive TR' %strcat(,trace) %TRACE_ACTIVE_X
-        setTraceVisible = ':TRACe:STATe:TR'%strcat( ,trace,' 1') %TRACE_VISIBLE_X
-        setTraceWriteOrFix = ':TRACE:ATTRIBUTE:TR' %all_traces(i) write_or_fix]; %TRACE_MODE_X
-        writeWaveformOnce = ':init:smode 1'%); % одиночное снятие спектра %WRITE_WAVEFORM_MODE
-        writeWaveform = ':init'%);         % начать снятие %WRITE_WAVEFORM_START
-        requestWriteStatus = ':stat:oper:even?'%); % запрос статуса снятия %WRITE_WAVEFORM_STATUS
-        saveWaveformToOSA = ':mmem:stor:trac TR' %obj.waveformTrace ',csv,"test",int']; %WRITE_WAVEFORM_SAVE
-        saveParameters = ',csv,"test",int' %SAVE_OSA_PARAMETERS
-        requestWaveformToPC = ':mmem:data? "test.csv",int'%); %SAVE_PC
-        selectAnalisysNF = ':CALCulate:CATegory NF'%); %ANALYSIS_MODE_NF
-        calculateRequest = ':calc' %???????????? % ); %ANALYSIS_START
-        requestCalcData = ':calc:data?'%); %ANALYSIS_READ
-        setPowerOffset = ':CALCulate:PARameter:POWer:OFFset ' %OFFSET_POW_X
-        setInOffset = ':CALCulate:PARameter:NF:IOFFset ' %OFFSET_NFIN_X
-        OFFSET_NFOUT_X = ':CALCulate:PARameter:NF:OOFFset ' %
+        WAVELENGTH_START_X = ':SENSe:WAVelength:STARt '
+        WAVELENGTH_STOP_X = ':SENSe:WAVelength:STOP '
+        SENSE_MODE_X = ':SENSe:SENSe '
+        SENSE_BANDWIDTH_X = ':SENSe:BANDwidth ' %obj.resolution 'NM' %SENSE_BANDWIDTH_X IMAQ6370C-17EN p.7-85
+        REFERENSE_LEVEL_X = ':DISPlay:TRACe:Y1:RLEVel ' %obj.referenceLevel 'dbm' %REFERENSE_LEVEL_X 7-75
+        LEVEL_SCALE_X = ':DISPlay:TRACe:Y1:PDIVision ' %obj.levelScale 'DB' %LEVEL_SCALE
+        TRACE_ACTIVE_X = ':TRACe:ACTive TR' %strcat(,trace) %TRACE_ACTIVE_X
+        TRACE_VISIBLE_X = ':TRACe:STATe:TR'%strcat( ,trace,' 1') %TRACE_VISIBLE_X
+        TRACE_MODE_X = ':TRACE:ATTRIBUTE:TR' %all_traces(i) write_or_fix]; %TRACE_MODE_X
+        WRITE_WAVEFORM_MODE = ':init:smode 1'
+        WRITE_WAVEFORM_START = ':init'
+        WRITE_WAVEFORM_STATUS = ':stat:oper:even?'
+        WRITE_WAVEFORM_SAVE = ':mmem:stor:trac TR' %obj.waveformTrace ',csv,"test",int'];
+        SAVE_OSA_PARAMETERS = ',csv,"test",int'
+        SAVE_PC = ':mmem:data? "test.csv",int'
+        ANALYSIS_MODE_NF = ':CALCulate:CATegory NF'
+        ANALYSIS_START = ':calc' %???????????? % ); %ANALYSIS_START
+        ANALYSIS_READ = ':calc:data?'
+        OFFSET_POWER = ':CALCulate:PARameter:POWer:OFFset '
+        OFFSET_NFIN = ':CALCulate:PARameter:NF:IOFFset '
+        OFFSET_NFOUT = ':CALCulate:PARameter:NF:OOFFset '
+        % manual 7-32
+            % ":PARameter:NF:IOFFset <NRf>[DB]"  % 7-61 manual
+            % ":PARameter:NF:OOFFset <NRf>[DB]"  % 7-62 manual
+            % ":PARameter:POWer:OFFSet <NRf>[DB]"  % 7-64 manual
+            % <NRf>[DB] = 10.00
+    end
+    properties
+        ipAddress
+        timeOut
+        isReady
+        virtualObject
+        waveformTrace
+        folder
+        userText
     end
     properties
         startWavelength
@@ -82,6 +85,7 @@ classdef Device_OSAyokogawa
             obj.waveformTrace = appStruct.WaveformtraceDropDown.Value;
             try
                 obj = connect(obj);
+                obj = startRequests(obj);
             catch
                 disp()
             end
@@ -114,96 +118,75 @@ classdef Device_OSAyokogawa
     end
 
     methods
-        % Установка настроек снятия спектра
-        function obj = applySettings(obj,app)
-            % Установка начальной длины волны
-            if app.CheckBoxStartWl.Value
-                obj.startWavelength = app.StartwavelengthEditField.Value;
-                request = [':SENSe:WAVelength:STARt ' obj.startWavelength 'NM'];
+        function obj = applySettings(obj,appStructSettings)
+            if appStructSettings.startWavelengthLogic
+                obj.startWavelength = appStructSettings.startWavelengthValue;
+                request = [obj.WAVELENGTH_START_X obj.startWavelength 'NM'];
                 writeline(obj.virtualObject, request);
             end
-            % Установка конечной длины волны
-            if app.CheckBoxStopWl.Value
-                obj.stopWavelength = app.StopwavelengthEditField.Value;
-                request = [':SENSe:WAVelength:STOP ' obj.stopWavelength 'NM'];
+            if appStructSettings.stopWavelengthLogic
+                obj.stopWavelength = appStructSettings.stopWavelengthValue;
+                request = [obj.WAVELENGTH_STOP_X obj.stopWavelength 'NM'];
                 writeline(obj.virtualObject, request);
             end
-            % Установка чувствительности
-            if app.CheckBoxSenseMode.Value
-                obj.senseMode = app.SensemodeEditField.Value;
-                senseModeRequest = [':SENSe:SENSe ' obj.senseMode];
-                writeline(obj.virtualObject, senseModeRequest);
+            if appStructSettings.senseModeLogic
+                obj.senseMode = appStructSettings.senseModeValue;
+                request = [obj.SENSE_MODE_X obj.senseMode];
+                writeline(obj.virtualObject, request);
             end
-            % Установка разрешения IMAQ6370C-17EN p.7-85
-            if app.CheckBoxResolution.Value
-                obj.resolution = app.ResolutionEditField.Value;
-                resolutionRequest = [':SENSe:BANDwidth ' obj.resolution 'NM'];
-                writeline(obj.virtualObject, resolutionRequest);
+            if appStructSettings.senseBandwidthLogic
+                obj.resolution = appStructSettings.senseBandwidthValue;
+                request = [obj.SENSE_BANDWIDTH_X obj.resolution 'NM'];
+                writeline(obj.virtualObject, request);
             end
-            % Установка опорного уровня 7-75
-            if app.CheckBoxReferenceLevel.Value
-                obj.referenceLevel = app.ReflevelEditField.Value;
-                referenceLevelRequest = [':DISPlay:TRACe:Y1:RLEVel ' obj.referenceLevel 'dbm'];
-                writeline(obj.virtualObject, referenceLevelRequest);
+            if appStructSettings.referenceLevelLogic
+                obj.referenceLevel = appStructSettings.referenceLevelValue;
+                request = [obj.REFERENSE_LEVEL_X obj.referenceLevel 'DBM'];
+                writeline(obj.virtualObject, request);
             end
-            % Установка шкалы уровня
-            if app.CheckBoxLevelScale.Value
-                obj.levelScale = app.LevelscaleEditField.Value;
-                request = [':DISPlay:TRACe:Y1:PDIVision ' obj.levelScale 'DB'];
+            if appStructSettings.levelScaleLogic
+                obj.levelScale = appStructSettings.levelScaleValue;
+                request = [obj.LEVEL_SCALE_X obj.levelScale 'DB'];
                 writeline(obj.virtualObject, request);
             end
         end
-        % Запись спектра на заданной трассе
-        function writeSelectedTrace(obj,trace)
-            % Выбор активной трассы
-            active_trace = strcat(':TRACe:ACTive TR',trace);
-            writeline(obj.virtualObject,active_trace);
-            % Сделать выбранную трассу видимой
-            disp_trace = strcat(':TRACe:STATe:TR',trace,' 1');
-            writeline(obj.virtualObject,disp_trace);
-
-            % Создание массива с названиями всех трасс
-            %all_traces = 'ABCDEFG';
-
-            % Ставим 1 на месте выбранной трассы и 0 на остальных
-            logic_traces = trace == obj.TRACES;
-            % Отправляем ОСА информацию о том, что выбранную трассу нужно
-            % поставить в режим записи, а остальные трассы зафиксировать
-            for i = 1:length(logic_traces)
-                if logic_traces(i)
-                    write_or_fix = ' WRITE';
+        function applyOffsetSettings(obj,offsetValue,type)
+            % offsetValue = '' (str)
+            % type = 'power','in','out'
+            if type == "power"
+                request = obj.OFFSET_POWER;
+            elseif type == "in"
+                request = obj.OFFSET_NFIN;
+            elseif type == "out"
+                request = obj.OFFSET_NFOUT;
+            end
+            writeline(obj.virtualObject,[request offsetValue]);
+        end
+        function writeWaveformOnTrace(obj,trace)
+            writeline(obj.virtualObject,[obj.TRACE_ACTIVE_X,trace]);
+            writeline(obj.virtualObject,[obj.TRACE_VISIBLE_X,trace,' 1']);
+            logicTraces = trace == obj.TRACES; %puts 1 at selected trace place, 0 at others
+            for i = 1:length(logicTraces)
+                if logicTraces(i)
+                    mode = ' WRITE';
                 else
-                    write_or_fix = ' FIX';
+                    mode = ' FIX';
                 end
-                write_or_fix_trace = [':TRACE:ATTRIBUTE:TR' obj.TRACES(i) write_or_fix];
-                writeline(obj.virtualObject,write_or_fix_trace);
+                writeline(obj.virtualObject,[obj.TRACE_MODE_X,obj.TRACES(i),mode]);
             end
-            % Выбор режима и снятие спектра
             flush(obj.virtualObject);
-            writeline(obj.virtualObject, ':init:smode 1'); % одиночное снятие спектра
-            writeline(obj.virtualObject, ':init');         % начать снятие
-            % Ожидаем пока спектр будет снят
-            status = '0';
-            while ~isequal(status,'1')
-                writeline(obj.virtualObject, ':stat:oper:even?'); % запрос статуса снятия
+            writeline(obj.virtualObject, obj.WRITE_WAVEFORM_MODE);
+            writeline(obj.virtualObject, obj.WRITE_WAVEFORM_START);
+            status = 0;
+            while ~status
+                writeline(obj.virtualObject, obj.WRITE_WAVEFORM_STATUS);
                 status = readline(obj.virtualObject);
-                status = char(status);%convertStringsToChars(status);
+                status = str2double(status);
             end
-            % Фиксируем выбранную трассу
-            fix_trace_ref = [':TRACE:ATTRIBUTE:TR' trace ' FIX'];
-            writeline(obj.virtualObject,fix_trace_ref);
+            writeline(obj.virtualObject,[obj.TRACE_MODE_X,trace,' FIX']);
         end
-        % Функция записи опорного сигнала
-        function writeReferenceTrace(obj)
-            writeSelectedTrace(obj,obj.referenceTrace);
-        end
-        % Функция записи спектра
-        function writeWaveformTrace(obj)
-            writeSelectedTrace(obj,obj.waveformTrace);
-        end
-        % Чтение рабочей области из файла на ОСА
         function obj = readWaveform(obj)
-            % Сохранение на ОСА
+            % Сохранение на ОСА   WRITE_WAVEFORM_SAVE
             write_spectr = [':mmem:stor:trac TR' obj.waveformTrace ',csv,"test",int'];
             writeline(obj.virtualObject, write_spectr);
             % Чтение из ОСА в ПК
@@ -421,23 +404,6 @@ classdef Device_OSAyokogawa
             filename = createFilename('power',obj.time(end));
             fullFilename = [obj.folder obj.userText '_' filename '.xlsx'];
             writematrix(obj.power,fullFilename);
-        end
-        function applyOffsetSettings(obj,offsetValue,type)
-            % offsetValue = '' (str)
-            % type = 'power','in','out'
-            % manual 7-32
-            % ":PARameter:NF:IOFFset <NRf>[DB]"  % 7-61 manual
-            % ":PARameter:NF:OOFFset <NRf>[DB]"  % 7-62 manual
-            % ":PARameter:POWer:OFFSet <NRf>[DB]"  % 7-64 manual
-            % <NRf>[DB] = 10.00
-            if type == "power"
-                request = obj.OFFSET_POWER_X;
-            elseif type == "in"
-                request = obj.OFFSET_NFIN_X;
-            elseif type == "out"
-                request = obj.OFFSET_NFOUT_X;
-            end
-            writeline(obj.virtualObject,[request offsetValue]);
         end
         function obj = deleteVirtualObject(obj)
             flush(obj.virtualObject);
