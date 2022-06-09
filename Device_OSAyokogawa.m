@@ -67,10 +67,10 @@ classdef Device_OSAyokogawa
         function obj = Device_OSAyokogawa(appStruct)
             % Constructor of class
             obj.folder = appStruct.folder;
-            obj.ipAddress = appStruct.IPaddressEditField.Value;
-            obj.timeOut = appStruct.TimeoutEditField.Value;
-            obj.referenceTrace = appStruct.ReferencetraceDropDown.Value;
-            obj.waveformTrace = appStruct.WaveformtraceDropDown.Value;
+            obj.ipAddress = appStruct.IPaddress;
+            obj.timeOut = appStruct.Timeout;
+            obj.referenceTrace = appStruct.Referencetrace;
+            obj.waveformTrace = appStruct.Waveformtrace;
             try
                 obj = connect(obj);
                 obj = startRequests(obj);
