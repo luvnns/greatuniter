@@ -9,8 +9,8 @@ if nargin == 0
     datetime = now;
 elseif nargin == 1
     name = '';
-elseif nargin == 2
-    name = [name,'_'];
+% elseif nargin == 2
+%     name = [name,'_'];
 end
 date = datestr(datetime, 'yyyymmdd');
 time = datestr(datetime, 'HHMMSS');
