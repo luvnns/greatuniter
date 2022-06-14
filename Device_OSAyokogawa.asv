@@ -144,9 +144,7 @@ classdef Device_OSAyokogawa
             end
             writeline(obj.virtualObject,[obj.TRACE_MODE_X,trace,' FIX']);
         end
-        function obj = readWaveform(obj,trace)
-            request = [obj.WRITE_WAVEFORM_SAVE,trace,obj.SAVE_OSA_PARAMETERS];
-            writeline(obj.virtualObject, request);
+        function obj = readWaveform(obj)
             flush(obj.virtualObject);
             writeline(obj.virtualObject,obj.SAVE_PC);
             firstDataLine = readline(obj.virtualObject);
