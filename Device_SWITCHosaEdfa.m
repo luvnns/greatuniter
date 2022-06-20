@@ -44,7 +44,7 @@ classdef Device_SWITCHosaEdfa
             delete(obj.virtualObject);
         end
     end
-    methods (Access = private)
+    methods (Access = private, Hidden)
         function obj = readSwitchState(obj)
             %pause(0.5)
             obj.lastResponse = readline(obj.virtualObject);
