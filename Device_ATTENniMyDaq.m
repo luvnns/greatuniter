@@ -1,8 +1,8 @@
 classdef Device_ATTENniMyDaq
     properties (Constant)
-        name = "myDAQ1"
-        channel = "ao0"
-        type = "Voltage"
+        NAME = "myDAQ1"
+        CHANNEL = "ao0"
+        TYPE = "Voltage"
     end
     properties
         funcAttenVolt
@@ -15,7 +15,7 @@ classdef Device_ATTENniMyDaq
         function obj = Device_ATTENniMyDaq(appStruct)
             obj.funcAttenVolt = appStruct.funcAttenVolt;
             obj.virtualObject = daq("ni");
-            addoutput(obj.virtualObject, obj.name, obj.channel, obj.type);
+            addoutput(obj.virtualObject, obj.NAME, obj.CHANNEL, obj.TYPE);
             %obj = setAttenuation(obj,0);
         end
         function obj = setAttenuation(obj,attenuation)

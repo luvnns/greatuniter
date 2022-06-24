@@ -1,6 +1,6 @@
 classdef Device_FPGA
     properties (Constant)
-        NEW_LINE = char([13 10])
+        NEW_LINE = char([13,10])
         FLASH_MEM = 'FLASH'
         EEPROM_MEM = 'EEPROM'
     end
