@@ -1,12 +1,12 @@
 classdef Device_OSAyokogawa
-    properties (Constant, Hidden)
+    properties (Constant)
         PORT = 10001;
         PASSWORD_RESPONSE = "ready"
         TRACES = 'ABCDEFG';
         NAMES_ANALYSIS_NF = {'center_wl','input_lvl',...
             'output_lvl','ase_lvl','resoln','gain','nf'}%"ch_num"(first)'s skipped
     end
-    properties (Constant, Hidden) % Requests
+    properties (Constant) % Requests
         % if name ends with "_X" it requires number and maybe units
         CONNECT_USERNAME= 'open "admin"'
         PASSWORD = 'admin'
@@ -42,7 +42,7 @@ classdef Device_OSAyokogawa
             % ":PARameter:POWer:OFFSet <NRf>[DB]"  % 7-64 manual
             % <NRf>[DB] = 10.00
     end
-    properties (Hidden)
+    properties
         ipAddress
         timeOut
         isReady
@@ -51,7 +51,7 @@ classdef Device_OSAyokogawa
         waveformTrace
         folder
     end
-    properties (Hidden)
+    properties
         startWavelength
         stopWavelength
         senseMode
@@ -59,7 +59,7 @@ classdef Device_OSAyokogawa
         levelScale
         referenceLevel
     end
-    properties (Hidden)
+    properties
         lastReadWaveform
         lastReadAnalysisEDFANF
     end
@@ -236,7 +236,7 @@ classdef Device_OSAyokogawa
             delete(obj.virtualObject);
         end
     end
-    methods (Access = private, Hidden)
+    methods (Access = private)
         function obj = connect(obj)
             obj.virtualObject = tcpclient(obj.ipAddress, obj.PORT, 'Timeout', obj.timeOut);
             configureTerminator(obj.virtualObject,"CR/LF");
