@@ -20,7 +20,7 @@ classdef Device_FPGA
         lastRead
         currentLinks %ex, = '0010' - link at 2nd transc (positions 4321)
     end
-    methods (Hidden)
+    methods
         function obj = Device_FPGA(appStruct)
             obj.interface = appStruct.InterfaceDropDown;
             obj.addressTablePath = appStruct.addressTablePath;
