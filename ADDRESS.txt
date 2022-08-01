@@ -1,0 +1,461 @@
+﻿# ===========================================================================================================
+# =                                              ADDRESS TABLE                                              = 
+# ===========================================================================================================
+# Description:
+# -----------------------------------------------------------------------------------------------------------
+# ADDR - HEX ADDRESS CONSTANT(the address of the read)
+#        15bits - b'REX_XXXX_XXXX_XXXX: X - Address; 
+#                                       R - Read/Write bit: 0-read, 1-write;
+#                                       E - EEPROM/FPGA bit: 0-FPGA, 1-EEPROM;
+#
+# BITS - The number of significant bits in the constant
+# 
+# FRM - Data format: HEX - hex
+#                    FLO - float
+#                    DFL - double float
+#                    USG - unsigned
+#                    SIG - signed (twos complement)
+#
+# NAME - Name Constants
+#
+# FILENAME - Filename (type: *.vhd)
+#
+# ===========================================================================================================
+
+
+# +---------------------------------------------------------------------------------------------------------+
+# | ЗАРЕЗЕРВИРОВАННЫЕ СИСТЕМНЫЕ КОНСТАНТЫ                                                                   |
+# +---------------------------------------------------------------------------------------------------------+
+# | ADDR = BITS = FRM = NAME = FILENAME                                                                     |
+# +---------------------------------------------------------------------------------------------------------+
+	# 0000 = [64] = HEX = NONAME = controller_const
+		# Нельзя использовать - часть работы протокола!
+		
+	0001 = [64] = HEX = CC_TEST =  cc_slave
+		Проверка работы Control Const (по-умолчанию "0011223344556677")
+
+# +---------------------------------------------------------------------------------------------------------+
+# | ОБЩИЕ КОНСТАНТЫ                                                                                         |
+# +---------------------------------------------------------------------------------------------------------+
+# | ADDR = BITS = FRM = NAME  = FILENAME                                                                    |
+# +---------------------------------------------------------------------------------------------------------+
+	0002 = [64] = HEX = SOFTWARE_VERSION = software_version
+		Версия прошивки в формате: год-месяц-число-часы-минуты-секунды (время начала компиляции проекта)
+		
+	0003 = [08] = HEX = HARD_RESET = power_reset_ctrl
+		Хардверный ресет всей платы по питанию (для активации произвести запись 0xAA)
+	0004 = [08] = HEX = SOFT_RESET = reset_ctrl
+		Софтверный ресет без PLL (для активации произвести запись 0xAA)
+		
+	0005 = [32] = HEX = ERROR_BYTE_MOMENT = error_byte
+		Индикатор текущих ошибок(см. ERROR.txt)
+	0006 = [32] = HEX = ERROR_BYTE_ACCUM = error_byte
+		Аккумулятор ошибок. При записи сбросит регистр (см. ERROR.txt)
+		
+	0007 = [16] = HEX = BOARD_NUMBER = cc_bus
+		Номер устройста/платы (уникальный для каждого блока)
+		
+	0008 = [16] = SIG = TEMPERATURE_LD = temp_i2c_mng
+		Температура на лазерных диодах (градусы * 100)
+	0009 = [16] = SIG = TEMPERATURE_FPGA = temp_i2c_mng
+		Температура на ПЛИСе (градусы * 100)
+	000A = [13] = USG = TEMP_CS = ds18s20
+		'temp_ds18s20_1' Данные(D) с датчика температуры ds18s20 1 о температуре в ____ (T) (D=10*T) [-550 to 850]
+	
+	000B = [06] = USG = CNT_WAIT_RESET = power_reset_ctrl
+		Величина задержки, перед включением основного алгоритма (в секундах)
+	000C = [06] = USG = CNT_REBOOT_CONF = power_reset_ctrl
+		Величина задержки, перед перезагрузкой прошивки с fabric_config на user_config (в секундах)
+	000D = [08] = HEX = CURRENT_CONFIG = power_reset_ctrl
+		Текущая загруженная конфигурация [0x00 - user; 0x01 - factory]. Если записать 0x50 по этому адресу, то процесс переключения конфигурации прекратится (после чтения будет 0x50 или 0x51, соответственно текущей конфигурации)
+	
+	000E = [32] = USG = WORK_CNT = error_byte
+		Счетчик в секундах (время работы с момента включения)
+		
+	# 000F = NULL
+	
+	0010 = [26] = HEX = LTC2373_1_MOSI_DATA = ltc2373_18_ctrl
+		Данные, передаваемы в АЦП1 по SPI.
+	0011 = [26] = HEX = LTC2373_1_MISO_DATA = ltc2373_18_ctrl
+		Данные, принимаемые с АЦП1 по SPI.
+	0012 = [26] = HEX = LTC2373_2_MOSI_DATA = ltc2373_18_ctrl
+		Данные, передаваемы в АЦП2 по SPI.
+	0013 = [26] = HEX = LTC2373_2_MISO_DATA = ltc2373_18_ctrl
+		Данные, принимаемые с АЦП2 по SPI.
+	
+	0014 = [16] = HEX = LDD1_SPI_DATAOUT = ldd_ctrl
+		Данные, передаваемые в iC-HT LDD контроллер №1
+	0015 = [08] = HEX = LDD1_SPI_DATAIN = ldd_ctrl
+		Данные (только последний байт), iC-HT LDD контроллера №1
+	0016 = [11] = USG = LDD1_MAX_CURRENT_LIM = ldd_ctrl
+		Ограничение по току iC-HT LDD контроллера №1
+	0017 = [10] = USG = LDD1_OFFSET_HIGH_RANGE = ldd_ctrl
+		Величина смещения HIGH токового диапазона, относительно LOW токового диапазона iC-HT LDD контроллера №1 (калибруется)
+	0018 = [11] = USG = I_LDD1_BKW = ldd_ctrl
+		'LDD1_ACTIVE_CURRENT' Текущий тока (код), который записывается в iC-HT LDD контроллера №1
+	0019 = [10] = USG = LDD1_LDK = ldd_ctrl
+		Напряжение на катоде LDD1
+		
+	001A = [16] = HEX = LDD2_SPI_DATAOUT = ldd_ctrl
+		Данные, передаваемые в iC-HT LDD контроллер №2
+	001B = [08] = HEX = LDD2_SPI_DATAIN = ldd_ctrl
+		Данные (только последний байт), iC-HT LDD контроллера №2
+	001C = [11] = USG = LDD2_MAX_CURRENT_LIM = ldd_ctrl
+		Ограничение по току iC-HT LDD контроллера №2
+	001D = [10] = USG = LDD2_OFFSET_HIGH_RANGE = ldd_ctrl
+		Величина смещения HIGH токового диапазона, относительно LOW токового диапазона iC-HT LDD контроллера №2 (калибруется)
+	001E = [11] = USG = I_LDD2_BKW = ldd_ctrl
+		'LDD2_ACTIVE_CURRENT' Текущий тока (код), который записывается в iC-HT LDD контроллера №2
+	001F = [10] = USG = LDD2_LDK = ldd_ctrl
+		Напряжение на катоде LDD2
+
+	0020 = [16] = HEX = LDD3_SPI_DATAOUT = ldd_ctrl
+		Данные, передаваемые в iC-HT LDD контроллер №3
+	0021 = [08] = HEX = LDD3_SPI_DATAIN = ldd_ctrl
+		Данные (только последний байт), iC-HT LDD контроллера №3
+	0022 = [11] = USG = LDD3_MAX_CURRENT_LIM = ldd_ctrl
+		Ограничение по току iC-HT LDD контроллера №3
+	0023 = [10] = USG = LDD3_OFFSET_HIGH_RANGE = ldd_ctrl
+		Величина смещения HIGH токового диапазона, относительно LOW токового диапазона iC-HT LDD контроллера №3 (калибруется)
+	0024 = [11] = USG = I_LDD3_FRW = ldd_ctrl
+		'LDD3_ACTIVE_CURRENT' Текущий тока (код), который записывается в iC-HT LDD контроллера №3
+	0025 = [10] = USG = LDD3_LDK = ldd_ctrl
+		Напряжение на катоде LDD3
+	
+	0026 = [16] = HEX = LDD4_SPI_DATAOUT = ldd_ctrl
+		Данные, передаваемые в iC-HT LDD контроллер №4
+	0027 = [08] = HEX = LDD4_SPI_DATAIN = ldd_ctrl
+		Данные (только последний байт), iC-HT LDD контроллера №4
+	0028 = [11] = USG = LDD4_MAX_CURRENT_LIM = ldd_ctrl
+		Ограничение по току iC-HT LDD контроллера №4
+	0029 = [10] = USG = LDD4_OFFSET_HIGH_RANGE = ldd_ctrl
+		Величина смещения HIGH токового диапазона, относительно LOW токового диапазона iC-HT LDD контроллера №4 (калибруется)
+	002A = [11] = USG = I_LDD4_FRW = ldd_ctrl
+		'LDD4_ACTIVE_CURRENT' Текущий тока (код), который записывается в iC-HT LDD контроллера №4
+	002B = [10] = USG = LDD4_LDK = ldd_ctrl
+		Напряжение на катоде LDD4
+		
+	002C = [19] = SIG = ADC1CH0_VD8_LDD3 = ltc2373_18_ctrl
+		'ADC1_DATA_CH0' Данные с ADC1 канал 0
+	002D = [19] = SIG = ADC1CH1_VD7_LDD1 = ltc2373_18_ctrl
+		'ADC1_DATA_CH1' Данные с ADC1 канал 1
+	002E = [19] = SIG = ADC1CH2_VD6_Pout_L2_1 = ltc2373_18_ctrl
+		'ADC1_DATA_CH2' Данные с ADC1 канал 2
+	002F = [19] = SIG = ADC1CH3_VD5_Pout_L1_1 = ltc2373_18_ctrl
+		'ADC1_DATA_CH3' Данные с ADC1 канал 3
+	0030 = [19] = SIG = ADC1CH4_VD4_Pin_L2_1 = ltc2373_18_ctrl
+		'ADC1_DATA_CH4' Данные с ADC1 канал 4
+	0031 = [19] = SIG = ADC1CH5_VD3_Pin_L1_1 = ltc2373_18_ctrl
+		'ADC1_DATA_CH5' Данные с ADC1 канал 5
+	0032 = [19] = SIG = ADC2CH0_VD14_LDD4 = ltc2373_18_ctrl
+		'ADC2_DATA_CH0' Данные с ADC2 канал 0
+	0033 = [19] = SIG = ADC2CH1_VD13_LDD2 = ltc2373_18_ctrl
+		'ADC2_DATA_CH1' Данные с ADC2 канал 1
+	0034 = [19] = SIG = ADC2CH2_VD12_Pout_L2_2 = ltc2373_18_ctrl
+		'ADC2_DATA_CH2' Данные с ADC2 канал 2
+	0035 = [19] = SIG = ADC2CH3_VD11_Pout_L1_2 = ltc2373_18_ctrl
+		'ADC2_DATA_CH3' Данные с ADC2 канал 3
+	0036 = [19] = SIG = ADC2CH4_VD10_Pin_L2_2 = ltc2373_18_ctrl
+		'ADC2_DATA_CH4' Данные с ADC2 канал 4
+	0037 = [19] = SIG = ADC2CH5_VD9_Pin_L1_2 = ltc2373_18_ctrl
+		'ADC2_DATA_CH5' Данные с ADC2 канал 5
+	
+	0038 = [19] = SIG = OFFSET_ADC1CH0_VD8_LDD3 = adc_offset
+		Смещение данных АЦП1 канала 0
+	0039 = [19] = SIG = OFFSET_ADC1CH1_VD7_LDD1 = adc_offset
+		Смещение данных АЦП1 канала 1
+	003A = [19] = SIG = OFFSET_ADC1CH2_VD6_Pout_L2_1 = adc_offset
+		Смещение данных АЦП1 канала 2
+	003B = [19] = SIG = OFFSET_ADC1CH3_VD5_Pout_L1_1 = adc_offset
+		Смещение данных АЦП1 канала 3
+	003C = [19] = SIG = OFFSET_ADC1CH4_VD4_Pin_L2_1 = adc_offset
+		Смещение данных АЦП1 канала 4
+	003D = [19] = SIG = OFFSET_ADC1CH5_VD3_Pin_L1_1 = adc_offset
+		Смещение данных АЦП1 канала 5
+	003E = [19] = SIG = OFFSET_ADC2CH0_VD14_LDD4 = adc_offset
+		Смещение данных АЦП2 канала 0
+	003F = [19] = SIG = OFFSET_ADC2CH1_VD13_LDD2 = adc_offset
+		Смещение данных АЦП2 канала 1
+	0040 = [19] = SIG = OFFSET_ADC2CH2_VD12_Pout_L2_2 = adc_offset
+		Смещение данных АЦП2 канала 2
+	0041 = [19] = SIG = OFFSET_ADC2CH3_VD11_Pout_L1_2 = adc_offset
+		Смещение данных АЦП2 канала 3
+	0042 = [19] = SIG = OFFSET_ADC2CH4_VD10_Pin_L2_2 = adc_offset
+		Смещение данных АЦП2 канала 4
+	0043 = [19] = SIG = OFFSET_ADC2CH5_VD9_Pin_L1_2 = adc_offset
+		Смещение данных АЦП2 канала 5
+		
+	0044 = [18] = USG = COEFF_Pin1_1 = fir_data_collector
+		Маштабный коэффициент сигнала Pin1_1 -> COEFF_FP * 2^16
+	0045 = [18] = USG = COEFF_Pin1_2 = fir_data_collector
+		Маштабный коэффициент сигнала Pin1_2 -> COEFF_FP * 2^16
+	0046 = [18] = USG = COEFF_Pin2_1 = fir_data_collector
+		Маштабный коэффициент сигнала Pin2_1 -> COEFF_FP * 2^16
+	0047 = [18] = USG = COEFF_Pin2_2 = fir_data_collector
+		Маштабный коэффициент сигнала Pin2_2 -> COEFF_FP * 2^16
+	0048 = [18] = USG = COEFF_Pout1_1 = fir_data_collector
+		Маштабный коэффициент сигнала Pout1_1 -> COEFF_FP * 2^16
+	0049 = [18] = USG = COEFF_Pout1_2 = fir_data_collector
+		Маштабный коэффициент сигнала Pout1_2 -> COEFF_FP * 2^16
+	004A = [18] = USG = COEFF_Pout2_1 = fir_data_collector
+		Маштабный коэффициент сигнала Pout2_1 -> COEFF_FP * 2^16
+	004B = [18] = USG = COEFF_Pout2_2 = fir_data_collector
+		Маштабный коэффициент сигнала Pout2_2 -> COEFF_FP * 2^16
+	004C = [18] = USG = COEFF_LDD4 = fir_data_collector
+		Маштабный коэффициент сигнала LDD4 -> COEFF_FP * 2^16
+	004D = [18] = USG = COEFF_LDD3 = fir_data_collector
+		Маштабный коэффициент сигнала LDD3 -> COEFF_FP * 2^16
+	004E = [18] = USG = COEFF_LDD2 = fir_data_collector
+		Маштабный коэффициент сигнала LDD2 -> COEFF_FP * 2^16
+	004F = [18] = USG = COEFF_LDD1 = fir_data_collector
+		Маштабный коэффициент сигнала LDD1 -> COEFF_FP * 2^16
+	
+	0050 = [16] = HEX = Therm_LD3 = cc_adc_inf 
+		Напряжение на терморезисторе лазерного диода 3
+	0051 = [16] = HEX = MON_PWR_LDD3 = cc_adc_inf 
+		Напряжение питания лазерного диода 3
+	0052 = [16] = HEX = Therm_LD4 = cc_adc_inf
+		Ток потребления платы управления
+	0053 = [16] = HEX = MON_PWR_LDD4 = cc_adc_inf
+		Напряжение питания лазерного диода 4
+	0054 = [16] = HEX = MON_PWR_LDD1 = cc_adc_inf
+		Напряжение питания лазерного диода 1
+	0055 = [16] = HEX = Therm_LD1 = cc_adc_inf
+		Напряжение на терморезисторе лазерного диода 1
+	0056 = [16] = HEX = MON_PWR_LDD2 = cc_adc_inf
+		Напряжение питания лазерного диода 2
+	0057 = [16] = HEX = Therm_LD2 = cc_adc_inf
+		Напряжение на терморезисторе лазерного диода 2
+	0058 = [16] = HEX = 3.3V_LDD_ADC4 = cc_adc_inf
+		Напряжение LDD принимаемые с АЦП4
+	0059 = [16] = HEX = 3.3V_LDD_ADC3 = cc_adc_inf
+		Напряжение LDD принимаемые с АЦП3
+	005A = [16] = HEX = 3.3V_LDD_ADC2 = cc_adc_inf
+		Напряжение LDD принимаемые с АЦП2
+	005B = [16] = HEX = 3.3V_LDD_ADC1 = cc_adc_inf
+		Напряжение LDD принимаемые с АЦП1
+	005C = [16] = HEX = IN_CURRENT = cc_adc_inf
+		Входной ток
+	005D = [16] = HEX = VCC_ADC = cc_adc_inf
+		Входное напряжение
+	005E = [16] = HEX = 3.3V_2_ADC = cc_adc_inf
+		Напряжение питания DC2
+	005F = [16] = HEX = 3.3V_1_ADC = cc_adc_inf
+		Напряжение питания DC1
+	0060 = [16] = HEX = 3.3V_ADC = cc_adc_inf
+		Напряжение на АЦП
+	0061 = [16] = HEX = 5V_ADC = cc_adc_inf
+		Напряжение на АЦП
+	0062 = [16] = HEX = 3.3V_ADC_ADC2 = cc_adc_inf
+		Напряжение на ФП2
+	0063 = [16] = HEX = 5V_ADC_ADC2 = cc_adc_inf
+		Напряжение на ФП2
+	0064 = [16] = HEX = 3.3V_ADC_ADC1 = cc_adc_inf
+		Напряжение на ФП1
+	0065 = [16] = HEX = 5V_ADC_ADC1 = cc_adc_inf
+		Напряжение на ФП1
+	0066 = [16] = HEX = 5V_DAC_ADC = cc_adc_inf
+		Напряжение питания ЦАП 
+	0067 = [16] = HEX = 3.3V_DAC_ADC = cc_adc_inf
+		Напряжение питания ЦАП 
+
+	0068 = [02] = HEX = SEL_PH_Pin = ph_reserv
+		Выбор ведущего фотоприемника побитово: 1бит - в линии 2, 0бит - в линии 1 [Пример: "10" - выбраны Pin2_2 и Pin1_1]
+
+	# 0069 = NULL	
+	
+	006A = [16] = USG = CURR_VAL_A1_ATTEN_L1 = DAC5686
+		Текущее значение на аттенюаторе A1 [15..0]
+	006B = [16] = USG = CURR_VAL_A2_ATTEN_L2 = DAC5686
+		Текущее значение на аттенюаторе A2 [15..0]
+	006C = [16] = USG = A2_ATTEN_L2 = DAC5686
+		Складываются с данными основного алгоритма (инкремент) и передаются на аттенюаторы [15..0]
+	006D = [16] = USG = A1_ATTEN_L1 = DAC5686
+		Складываются с данными основного алгоритма (инкремент) и передаются на аттенюаторы [15..0]
+	006E = [16] = USG = A3_ATTEN_TEST_L1_TO_L2 = DAC5686
+		Складываются с данными основного алгоритма (инкремент) и передаются на аттенюаторы [15..0]
+	006F = [16] = USG = A4_ATTEN_TEST_L2_TO_L1 = DAC5686
+		Складываются с данными основного алгоритма (инкремент) и передаются на аттенюаторы [15..0]
+	
+	0070 = [02] = USG = MODE = main_controller
+		Режим работы прибора: 0 - ручная установка тока; 1 - компенсация ЛД по мощности; 2 - компенсация по выходной мощности
+
+	0071 = [04] = HEX = LDD_EN = main_controller
+		Включение/выключение работы iC-HT LDD контроллеров. Побитово: 3бит-LDD4, 2бит-LDD3, 1бит-LDD2, 0бит-LDD1,
+	
+	0072 = [11] = USG = LDD1_CURRENT = main_controller
+		Задание тока на LDD1 в режиме ручной установки тока (MODE 0)
+	0073 = [11] = USG = LDD2_CURRENT = main_controller
+		Задание тока на LDD2 в режиме ручной установки тока (MODE 0)
+	0074 = [11] = USG = LDD3_CURRENT = main_controller
+		Задание тока на LDD3 в режиме ручной установки тока (MODE 0)
+	0075 = [11] = USG = LDD4_CURRENT = main_controller
+		Задание тока на LDD4 в режиме ручной установки тока (MODE 0)
+	
+	0076 = [32] = FLO = LDD1_SETPOINT = main_controller
+		Задание уставки мощности LDD1 в режиме компенсации ЛД по мощности (MODE 1)
+	0077 = [32] = FLO = LDD2_SETPOINT = main_controller
+		Задание уставки мощности LDD2 в режиме компенсации ЛД по мощности (MODE 1)
+	0078 = [32] = FLO = LDD3_SETPOINT = main_controller
+		Задание уставки мощности LDD3 в режиме компенсации ЛД по мощности (MODE 1)
+	0079 = [32] = FLO = LDD4_SETPOINT = main_controller
+		Задание уставки мощности LDD4 в режиме компенсации ЛД по мощности (MODE 1)
+		
+	007A = [32] = FLO = Kp = main_controller
+		Коэффициент деления можности по каналам.
+
+	007B = [32] = FLO = POUT1_SETPOINT = main_controller
+		Задание уставки выходной мощности в режиме компенсация по выходной мощности (MODE 2)
+	007C = [32] = FLO = POUT2_SETPOINT = main_controller
+		Задание уставки выходной мощности в режиме компенсация по выходной мощности (MODE 2)
+	
+	007D = [32] = FLO = K_PIN_COEFF = main_controller
+		Коэффициент K для компенсации noise-factor y=K*x+B
+	007E = [32] = FLO = B_PIN_COEFF = main_controller
+		Коэффициент B для компенсации noise-factor y=K*x+B
+	007F = [32] = FLO = GAIN_GEN_TO_ATTEN = main_controller
+		Коэффициент усиления данных с GEN_PID, идущих на сложение с ATTEN_PID
+	
+	0080 = [04] = HEX = OSC_SFF_SD = top 
+		Значение пина SD трансиверов. 0 бит - 1 трансивер, ..., 3 бит - 4 трансивер.
+	0081 = [04] = HEX = OSC_SFF_TXFAIL = top
+		Значение пина TXFAIL трансиверов. 0 бит - 1 трансивер, ..., 3 бит - 4 трансивер.
+	0082 = [04] = HEX = OSC_SFF_ENABLE = top
+		Записать 1 для включения трансиверов. 0 бит - 1 трансивер, ..., 3 бит - 4 трансивер.
+	0083 = [01] = USG = OSC_SWITCH = top
+		Сменить длины волн сервисного канала. 0 - длины волн приёма и передачи совпадают, 1 - длины волн меняются внутри блока.
+	
+	# 0084 - 00C3 = NULL
+		
+	00C4 = [32] = FLO = PIN1_FILT_CAL = main_controller
+		Входная мощность на линии 1 (отфильтрованная и откалиброванная)
+	00C5 = [32] = FLO = PIN2_FILT_CAL = main_controller
+		Входная мощность на линии 2 (отфильтрованная и откалиброванная)
+	00C6 = [32] = FLO = POUT1_FILT_CAL = main_controller
+		Выходная мощность на линии 1 (отфильтрованная и откалиброванная)
+	00C7 = [32] = FLO = POUT2_FILT_CAL = main_controller
+		Выходная мощность на линии 2 (отфильтрованная и откалиброванная)
+	
+	# 00C8 = NULL
+	
+	00C9 = [32] = FLO = GEN_P_VALUE_CH0 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00CA = [32] = FLO = GEN_I_VALUE_CH0 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00CB = [32] = FLO = GEN_D_VALUE_CH0 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00CC = [32] = FLO = GEN_I_MAX_CH0 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00CD = [32] = FLO = GEN_I_MIN_CH0 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00CE = [32] = FLO = LDD1_P_VALUE_CH1 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00CF = [32] = FLO = LDD1_I_VALUE_CH1 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00D0 = [32] = FLO = LDD1_D_VALUE_CH1 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00D1 = [32] = FLO = LDD1_I_MAX_CH1 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00D2 = [32] = FLO = LDD1_I_MIN_CH1 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00D3 = [32] = FLO = LDD2_P_VALUE_CH2 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00D4 = [32] = FLO = LDD2_I_VALUE_CH2 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00D5 = [32] = FLO = LDD2_D_VALUE_CH2 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00D6 = [32] = FLO = LDD2_I_MAX_CH2 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00D7 = [32] = FLO = LDD2_I_MIN_CH2 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00D8 = [32] = FLO = LDD3_P_VALUE_CH3 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00D9 = [32] = FLO = LDD3_I_VALUE_CH3 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00DA = [32] = FLO = LDD3_D_VALUE_CH3 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00DB = [32] = FLO = LDD3_I_MAX_CH3 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00DC = [32] = FLO = LDD3_I_MIN_CH3 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00DD = [32] = FLO = LDD4_P_VALUE_CH4 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00DE = [32] = FLO = LDD4_I_VALUE_CH4 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00DF = [32] = FLO = LDD4_D_VALUE_CH4 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00E0 = [32] = FLO = LDD4_I_MAX_CH4 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00E1 = [32] = FLO = LDD4_I_MIN_CH4 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00E2 = [32] = FLO = ATTEN1_P_VALUE_CH5 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00E3 = [32] = FLO = ATTEN1_I_VALUE_CH5 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00E4 = [32] = FLO = ATTEN1_D_VALUE_CH5 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00E5 = [32] = FLO = ATTEN1_I_MAX_CH5 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00E6 = [32] = FLO = ATTEN1_I_MIN_CH5 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00E7 = [32] = FLO = ATTEN2_P_VALUE_CH6 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00E8 = [32] = FLO = ATTEN2_I_VALUE_CH6 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00E9 = [32] = FLO = ATTEN2_D_VALUE_CH6 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00EA = [32] = FLO = ATTEN2_I_MAX_CH6 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00EB = [32] = FLO = ATTEN2_I_MIN_CH6 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00EC = [32] = FLO = DCO_LDD1_P_VALUE_CH7 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00ED = [32] = FLO = DCO_LDD1_I_VALUE_CH7 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00EE = [32] = FLO = DCO_LDD1_D_VALUE_CH7 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00EF = [32] = FLO = DCO_LDD1_I_MAX_CH7 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00F0 = [32] = FLO = DCO_LDD1_I_MIN_CH7 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00F1 = [32] = FLO = DCO_LDD2_P_VALUE_CH8 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00F2 = [32] = FLO = DCO_LDD2_I_VALUE_CH8 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00F3 = [32] = FLO = DCO_LDD2_D_VALUE_CH8 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00F4 = [32] = FLO = DCO_LDD2_I_MAX_CH8 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00F5 = [32] = FLO = DCO_LDD2_I_MIN_CH8 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
+	00F6 = [32] = FLO = DCO_LDD3_P_VALUE_CH9 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00F7 = [32] = FLO = DCO_LDD3_I_VALUE_CH9 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00F8 = [32] = FLO = DCO_LDD3_D_VALUE_CH9 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00F9 = [32] = FLO = DCO_LDD3_I_MAX_CH9 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00FA = [32] = FLO = DCO_LDD3_I_MIN_CH9 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+
+	00FB = [32] = FLO = DCO_LDD4_P_VALUE_CH10 = pid_regulator_fp
+		Коэффициент P-звена ПИД-регулятора
+	00FC = [32] = FLO = DCO_LDD4_I_VALUE_CH10 = pid_regulator_fp
+		Коэффициент I-звена ПИД-регулятора
+	00FD = [32] = FLO = DCO_LDD4_D_VALUE_CH10 = pid_regulator_fp
+		Коэффициент D-звена ПИД-регулятора
+	00FE = [32] = FLO = DCO_LDD4_I_MAX_CH10 = pid_regulator_fp
+		Максимальное значение интегратора в ПИД-регуляторе
+	00FF = [32] = FLO = DCO_LDD4_I_MIN_CH10 = pid_regulator_fp
+		Минимальное значение интегратора в ПИД-регуляторе
+	
