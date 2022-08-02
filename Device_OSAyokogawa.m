@@ -61,6 +61,7 @@ classdef Device_OSAyokogawa
     end
     properties
         lastReadWaveform
+        lastReadWaveformPath
         lastReadAnalysisEDFANF
     end
     methods
@@ -172,10 +173,10 @@ classdef Device_OSAyokogawa
             response = read(obj.virtualObject,bytesForRead,"char");
             obj.lastReadWaveform = [firstDataLine,response];
         end
-        function saveWaveform(obj,userText)
-            filename = [obj.folder,filesep,userText,...
+        function obj = saveWaveform(obj,userText)
+            obj.lastReadWaveformPath = [obj.folder,filesep,userText,...
                 createFilename(now,'waveform_'),'.csv'];
-            fileID = fopen(filename,'w');
+            fileID = fopen(obj.lastReadWaveformPath,'w');
             fwrite(fileID,obj.lastReadWaveform,'char');
             fclose(fileID);
         end
@@ -211,20 +212,10 @@ classdef Device_OSAyokogawa
             response = readline(obj.virtualObject);
             power = str2double(response);
         end
-        function plotWaveformYoko(obj,axes)
-            tableWaveform = readmatrix(obj.lastReadWaveform);
-            forSearch = tableWaveform(:,1);
-            searchArray = find(isnan(forSearch));
-            row = searchArray(end) + 1; %первая строка графика
-            tableWaveform = tableWaveform(row:end,:);
-            figureWaveform = tableWaveform;
-            x = figureWaveform(:,1);
-            y = figureWaveform(:,2);
-            
-            title(axes,'Spectrum (log)');
-            xlabel(axes,'Wavelength, nm');
-            ylabel(axes,'Power, dBm');
-            plot(axes,x,y);
+        function plotWaveform(obj,app)
+            setLabelsAxes(app,'Spectrum (log)','Wavelength, nm','Power, dBm');
+            [x, y] = prepareForPlotDataFromOSA(obj.lastReadWaveformPath);
+            plotAxes(app, x, y);
         end
         function obj = deleteVirtualObject(obj)
             flush(obj.virtualObject);

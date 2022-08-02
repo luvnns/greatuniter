@@ -56,13 +56,18 @@ for rowNumber = 1:height_sampleTable
         difference = powerReal - powerTh;
     end
     sampleTable{rowNumber,'InputPowerRealDBm'} = powerReal;
-    addStrOutput(mainApp.mainWindow,['Attenuation is ', attenuation]);
+    addStrOutput(mainApp.mainWindow,['Attenuation is ', num2str(attenuation)]);
     pauseAfterAttenuation = sampleTable{rowNumber,'PauseAfterAttenuationS'};
     addStrOutput(mainApp.mainWindow,['Pause for ',num2str(pauseAfterAttenuation),' s']);
     pause(pauseAfterAttenuation);
     addStrOutput(mainApp.mainWindow,['Write reference trace ',referenceTrace]);
     writeWaveform(OSAyokogawa,referenceTrace);
-    pause(5);
+    readWaveform(OSAyokogawa,referenceTrace);
+    OSAyokogawa = saveWaveform(OSAyokogawa,referenceTrace);
+    clearAxes(mainApp.mainWindow);
+    setLabelsAxes(mainApp.mainWindow,'Spectrum (log)','Wavelength, nm','Power, dBm');
+    plotWaveform(OSAyokogawa,mainApp.mainWindow);
+    holdAxes(mainApp.mainWindow, 'on');
     SWITCHosaEdfa = switchSignalTo(SWITCHosaEdfa,'EDFA');
     addStrOutput(mainApp.mainWindow,SWITCHosaEdfa.infoString);
     for j = varNumberToWriteStart:varNumberToWriteStop
@@ -79,7 +84,10 @@ for rowNumber = 1:height_sampleTable
     addStrOutput(mainApp.mainWindow,['Read waveform trace ',waveformTrace]);
     OSAyokogawa = readWaveform(OSAyokogawa,waveformTrace);
     addStrOutput(mainApp.mainWindow,['Save waveform trace ',waveformTrace]);
-    saveWaveform(OSAyokogawa,userText);
+    OSAyokogawa = saveWaveform(OSAyokogawa,userText);
+    plotWaveform(OSAyokogawa,mainApp.mainWindow);
+    holdAxes(mainApp.mainWindow, 'off');
+    setLegend(mainApp.mainWindow,{'Reference','Waveform'});
     addStrOutput(mainApp.mainWindow,'Read waveform parameters');
     sampleTable{rowNumber,'OutputPowerRealDBmOSA'} = readPower(OSAyokogawa,waveformTrace);
     OSAyokogawa = readAnalysisEDFANF(OSAyokogawa,waveformTrace);
