@@ -1,6 +1,6 @@
 %% Initial parameters
-sampleTablePath = 'C:\greatuniter_test2807\tables\testEDFA_ALL_LDD.xlsx';
-userText = 'test';
+sampleTablePath = 'C:\greatuniter_test0208\tables\testEDFA_ALL_LDD.xlsx';
+userText = 'test_';
 referenceTrace = 'A';
 waveformTrace = 'B';
 varNumberToWriteStart = 4;
@@ -62,10 +62,11 @@ for rowNumber = 1:height_sampleTable
     pause(pauseAfterAttenuation);
     addStrOutput(mainApp.mainWindow,['Write reference trace ',referenceTrace]);
     writeWaveform(OSAyokogawa,referenceTrace);
-    readWaveform(OSAyokogawa,referenceTrace);
-    OSAyokogawa = saveWaveform(OSAyokogawa,referenceTrace);
+    OSAyokogawa = readWaveform(OSAyokogawa,referenceTrace);
+    OSAyokogawa = saveWaveform(OSAyokogawa,'referenceTrace_');
     clearAxes(mainApp.mainWindow);
     setLabelsAxes(mainApp.mainWindow,'Spectrum (log)','Wavelength, nm','Power, dBm');
+    setLimsAxes(mainApp.mainWindow,[-inf inf],[-80 inf]);
     plotWaveform(OSAyokogawa,mainApp.mainWindow);
     holdAxes(mainApp.mainWindow, 'on');
     SWITCHosaEdfa = switchSignalTo(SWITCHosaEdfa,'EDFA');
@@ -74,7 +75,7 @@ for rowNumber = 1:height_sampleTable
         name = varNames{j};
         data = string(sampleTable{rowNumber,name});
         FPGA = writeData(FPGA, FPGA.FLASH_MEM, name, data);
-        addStrOutput(mainApp.mainWindow,['Write to FPGA ',name,' = ',data]);
+        addStrOutput(mainApp.mainWindow,strcat('Write to FPGA ',name,' = ',data));
     end
     pauseAfterSetOutputPower = sampleTable{rowNumber,'PauseAfterSetOutputPowerS'};
     addStrOutput(mainApp.mainWindow,['Pause for ',num2str(pauseAfterSetOutputPower),' s']);
