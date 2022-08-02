@@ -17,7 +17,7 @@ SWITCHosaEdfa = mainApp.SWITCHosaEdfa;
 %% Get table from file
 sampleTable = readtable(sampleTablePath);
 
-%% Cycle for table rows with showing in process(?)
+%% Cycle for table rows with showing in process
 refreshProgress(mainApp.mainWindow,0);
 tablePath = [OSAyokogawa.folder,filesep,userText,createFilename(now,'result_'),'.xlsx'];
 addStrOutput(mainApp.mainWindow,[ ...

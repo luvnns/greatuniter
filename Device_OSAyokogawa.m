@@ -211,26 +211,21 @@ classdef Device_OSAyokogawa
             response = readline(obj.virtualObject);
             power = str2double(response);
         end
-%         function plotWaveformYoko(obj,app)
-%             %disp(obj.waveformFile)
-%             tableWaveform = readmatrix(obj.waveformFile);
-%             forSearch = tableWaveform(:,1);
-%             searchArray = find(isnan(forSearch));
-%             row = searchArray(end) + 1; %первая строка графика
-%             tableWaveform = tableWaveform(row:end,:);
-%             figureWaveform = tableWaveform;
-%             x = figureWaveform(:,1);
-%             y = figureWaveform(:,2);
-%             %yLine = dBm2mkW(y);
-%             title(app.UIAxesLog,'Spectrum (log)');
-%             xlabel(app.UIAxesLog,'Wavelength, nm');
-%             ylabel(app.UIAxesLog,'Power, dBm');
-%             plot(app.UIAxesLog,x,y);
-%             %             title(app.UIAxesLine,'Spectrum (line)');
-%             %             xlabel(app.UIAxesLine,'Wavelength, nm');
-%             %             ylabel(app.UIAxesLine,'Power, mkW');
-%             %             plot(app.UIAxesLine,x,yLine);
-%         end
+        function plotWaveformYoko(obj,axes)
+            tableWaveform = readmatrix(obj.lastReadWaveform);
+            forSearch = tableWaveform(:,1);
+            searchArray = find(isnan(forSearch));
+            row = searchArray(end) + 1; %первая строка графика
+            tableWaveform = tableWaveform(row:end,:);
+            figureWaveform = tableWaveform;
+            x = figureWaveform(:,1);
+            y = figureWaveform(:,2);
+            
+            title(axes,'Spectrum (log)');
+            xlabel(axes,'Wavelength, nm');
+            ylabel(axes,'Power, dBm');
+            plot(axes,x,y);
+        end
         function obj = deleteVirtualObject(obj)
             flush(obj.virtualObject);
             delete(obj.virtualObject);
