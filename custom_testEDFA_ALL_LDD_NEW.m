@@ -28,7 +28,7 @@ addStrOutput(mainApp.mainWindow,'');
 addStrOutput(mainApp.mainWindow,'DO NOT OPEN TABLE UNTIL FINISHED');
 addStrOutput(mainApp.mainWindow,'Use opened figure instead');
 addStrOutput(mainApp.mainWindow,'');
-ATTENniMyDaq = setAttenuation(ATTENniMyDaq,0);
+ATTENniMyDaq = setMaxAttenuation(ATTENniMyDaq);
 FPGA = writeData(FPGA, FPGA.FLASH_MEM, 'MODE', '0');
 addStrOutput(mainApp.mainWindow,'Write to FPGA MODE = 0');
 enableWarningLaser(mainApp.mainWindow);
