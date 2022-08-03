@@ -218,7 +218,6 @@ classdef Device_OSAyokogawa
             plotAxes(app, x, y);
         end
         function obj = deleteVirtualObject(obj)
-            flush(obj.virtualObject);
             delete(obj.virtualObject);
         end
     end
