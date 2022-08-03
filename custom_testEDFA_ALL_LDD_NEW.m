@@ -111,7 +111,7 @@ for rowNumber = 1:height_sampleTable
         statusTable = refreshTable(statusTable,sampleTable);
     end
     progress = rowNumber / height_sampleTable * 100;
-    refreshProgress(mainApp.mainWindow,progress);
+    refreshProgress(mainApp.mainWindow,round(progress));
 end
 FPGA = writeData(FPGA, FPGA.FLASH_MEM, 'LDD_EN', '0');
 addStrOutput(mainApp.mainWindow,'Write to FPGA LDD_EN = 0');
