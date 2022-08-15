@@ -1,77 +1,56 @@
-classdef OtherParameter
+classdef FPGA_Parameter < FPGA_Component
     properties (Constant)
-        deviceType = "Общие проверки"
-        designation = "-"
-        serialNumber = "-"
-        nameCriteria2 = "-"
-        valueCriteria2 = "-"
+        deviceTypeConst = "Electric parameter"
     end
     properties
-        boardNumber
-        comment
-        inspectorName
         cellOtherParameter
-    end
-    properties
-        tableComponent
-        tableOtherParameter
-        folder
-        time
-    end
-    properties
-        nameCriteria1
-        valueCriteria1
+        tableName
     end
     methods
-        function obj = OtherParameter(app)
-            obj.boardNumber = app.BoardnumberEditField.Value;
-            obj.comment = app.CommentEditField.Value;
-            obj.inspectorName = app.InspectornameEditField.Value;
+        function obj = FPGA_Parameter(appStruct)
+            obj = obj@FPGA_Component(appStruct);
+            obj.deviceType = obj.deviceTypeConst;
+        end
+        function obj = setParameters(obj,tempAndElectricStruct,params)
             header = {obj.boardNumber;obj.comment;obj.inspectorName};
             header(:,2:3) = {'','';'','';'',''};
-            ethernet = app.EthernetDropDown.Value;
-            tempOut = app.TemperatureoutsideEditField.Value;
-            tempFPGA = app.TemperaturefpgaEditField.Value;
-            tempLD = app.TemperaturefpgaEditField.Value;
-            voltage = app.VoltageEditField.Value;
-            current = app.CurrentEditField.Value;
-            currentMax = app.CurrentmaxEditField.Value;
-            data = {ethernet;tempOut;tempFPGA;tempLD;voltage;current;currentMax};
+            tempOut = tempAndElectricStruct.tempOut;
+            tempFPGA = tempAndElectricStruct.tempFPGA;
+            tempLD = tempAndElectricStruct.tempLD;
+            voltage = tempAndElectricStruct.voltage;
+            current = tempAndElectricStruct.current;
+            data = {tempOut;tempFPGA;tempLD;voltage;current};
             data(:,2:3) = {'','';'','';'','';'','';'','';'','';'',''};
-            paramFromBoard = app.paramFromBoard;
-            obj.cellOtherParameter = [header; data; paramFromBoard];
-            
-            if app.tableComponent == "не выбрана" || app.tableOtherParameter == "не выбрана"
-                error('Не все таблицы добавлены');
-            else
-                obj.tableComponent = app.tableComponent;
-                obj.tableOtherParameter = app.tableOtherParameter;
-            end
-            obj.folder = app.folder;
-            obj.time = app.time;
+            obj.cellOtherParameter = [header; data; params];
         end
-        function obj = saveTable(obj)
-            rowNames = readcell(obj.tableOtherParameter,'Sheet','Sample');
+        function obj = setCriterias(obj,name,value)
+            obj.criteriaNames(1) = name;
+            obj.criteriaValues(1) = value;
+            %obj.criteriaNames(2) = ;
+            %obj.criteriaValues(2) = ;
+        end
+        function saveTables(obj)
+            rowNames = readcell(obj.tableSamplePath,'Sheet','Sample');
             rowNames = rowNames(:,1);
-            disp(rowNames)
-            
-            sheetName = createFilename('OP',obj.time);
-            
             s1 = obj.boardNumber;
-            s2 = 'OtherParams';
-            tableName = ['B' s1 '_' s2];
-            tableForSave = table(obj.cellOtherParameter,'RowNames',rowNames);
-            writetable(tableForSave,[obj.folder tableName '.xlsx'],'Sheet',sheetName,...
+            s2 = obj.designation;
+            s3 = createFilename(obj.time);
+            obj.tableName = ['B' s1 '_' s2 '_' s3];
+            sheetName = obj.tableName; %createFilename(obj.time,'AT');
+            arrayForSave = obj.cellOtherParameter;
+            tableForSave = table(arrayForSave,'RowNames',rowNames);
+            writetable(tableForSave,[obj.folder obj.tableName '.xlsx'],'Sheet',sheetName,...
                 'WriteVariableNames',false,'WriteRowNames',true,...
-                'WriteMode','append','AutoFitWidth',false);%'UseExcel',true
-            
-            tableForAppend = tableForSave(4:end,:);%%%%
-            
+                'WriteMode','append','AutoFitWidth',false);
+
+            tableForAppend = tableForSave(3:end,:);
+            criteriasNames = tableForAppend.Properties.RowNames;
             for i = 1:height(tableForAppend)
-                obj.nameCriteria1 = tableForAppend.Properties.RowNames{i};
-                value = tableForAppend{i,1};
-                obj.valueCriteria1 = value{1};
-                appendTableComponent(obj);
+                name = criteriasNames{i};
+                cellValue = tableForAppend{i,1};
+                value = cellValue{1};
+                obj = setCriterias(obj,name,value);
+                appendTableComponents(obj);
             end
         end
     end
