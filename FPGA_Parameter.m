@@ -30,6 +30,7 @@ classdef FPGA_Parameter < FPGA_Component
             %obj.criteriaValues(2) = ;
         end
         function saveTables(obj)
+            obj = setCriterias(obj);
             rowNames = readcell(obj.tableSamplePath,'Sheet','Sample');
             rowNames = rowNames(:,1);
             s1 = obj.boardNumber;

@@ -52,6 +52,7 @@ classdef FPGA_Attenuator < FPGA_Component
             obj.criteriaValues(2) = obj.attenuationCoefficientMeasure(ind);
         end
         function saveTables(obj)
+            obj = setCriterias(obj);
             rowNames = readcell(obj.tableSamplePath,'Sheet','Sample');
             rowNames = rowNames(:,1);
             s1 = obj.boardNumber;
