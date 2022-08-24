@@ -12,7 +12,7 @@ elseif isequal(mode,'out')
     powerMeasure = tableVD{:,'OutputPowerRealMW'};
     %x_mW = 0:0.001:60;
     x_dBm = -30:0.1:18;
-end
+end   
 
 x_mW = 10.^(x_dBm./10);
 
